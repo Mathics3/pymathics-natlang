@@ -10,6 +10,10 @@ PIP ?= pip3
 RM  ?= rm
 LANG ?= en
 
+# Size of wordlist used
+# sm=small, lg=large, md=medium.
+WORDLIST_SIZE ?=md
+
 .PHONY: all build \
    check clean \
    develop dist doc doc-data \
@@ -20,10 +24,11 @@ LANG ?= en
 #: Default target - same as "develop"
 all: develop
 
-#
+#: Word-list data. Customize with LANG (and eventually WORDLIST_SIZE) variables
 wordlist:
 	$(PYTHON) -m nltk.downloader wordnet omw
 	$(PYTHON) -m spacy download $(LANG)
+#	# $(PYTHON) -m spacy download $(LANG)_core_web_$(WORDLIST_SIZE)
 
 #: build everything needed to install
 build:

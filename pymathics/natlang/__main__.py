@@ -285,7 +285,7 @@ class _SpacyBuiltin(Builtin):
 class WordFrequencyData(_SpacyBuiltin):
     """
     <dl>
-    <dt>'WordFrequencyData[$word$]'
+      <dt>'WordFrequencyData[$word$]'
       <dd>returns the frequency of $word$ in common English texts.
     </dl>
     """
@@ -306,7 +306,7 @@ class WordFrequencyData(_SpacyBuiltin):
 class WordCount(_SpacyBuiltin):
     """
     <dl>
-    <dt>'WordCount[$string$]'
+      <dt>'WordCount[$string$]'
       <dd>returns the number of words in $string$.
     </dl>
 
@@ -325,9 +325,10 @@ class WordCount(_SpacyBuiltin):
 class TextWords(_SpacyBuiltin):
     """
     <dl>
-    <dt>'TextWords[$string$]'
+      <dt>'TextWords[$string$]'
       <dd>returns the words in $string$.
-    <dt>'TextWords[$string$, $n$]'
+
+      <dt>'TextWords[$string$, $n$]'
       <dd>returns the first $n$ words in $string$
     </dl>
 
@@ -364,9 +365,10 @@ class TextWords(_SpacyBuiltin):
 class TextSentences(_SpacyBuiltin):
     """
     <dl>
-    <dt>'TextSentences[$string$]'
+      <dt>'TextSentences[$string$]'
       <dd>returns the sentences in $string$.
-    <dt>'TextSentences[$string$, $n$]'
+
+      <dt>'TextSentences[$string$, $n$]'
       <dd>returns the first $n$ sentences in $string$
     </dl>
 
@@ -379,8 +381,6 @@ class TextSentences(_SpacyBuiltin):
     >> TextSentences["Mr. Jones met Mrs. Jones."]
      = {Mr. Jones met Mrs. Jones.}
     """
-
-    context = "PyMathics`"
 
     def apply(self, text, evaluation, options):
         "TextSentences[text_String, OptionsPattern[%(name)s]]"
@@ -406,9 +406,10 @@ class TextSentences(_SpacyBuiltin):
 class DeleteStopwords(_SpacyBuiltin):
     """
     <dl>
-    <dt>'DeleteStopwords[$list$]'
+      <dt>'DeleteStopwords[$list$]'
       <dd>returns the words in $list$ without stopwords.
-    <dt>'DeleteStopwords[$string$]'
+
+      <dt>'DeleteStopwords[$string$]'
       <dd>returns $string$ without stopwords.
     </dl>
 
@@ -453,7 +454,7 @@ class DeleteStopwords(_SpacyBuiltin):
 class WordFrequency(_SpacyBuiltin):
     """
     <dl>
-    <dt>'WordFrequency[$text$, $word$]'
+      <dt>'WordFrequency[$text$, $word$]'
       <dd>returns the relative frequency of $word$ in $text$.
     </dl>
 
@@ -506,7 +507,7 @@ def _cases(doc, form):
         if not all(isinstance(f, String) for f in form.leaves):
             return  # error
         generators = [_forms.get(f.get_string_value()) for f in form.leaves]
-    elif form.get_head_name() == "System`Containing":
+    elif form.get_head_name() == "PyMathics`Containing":
         if len(form.leaves) == 2:
             for t in _containing(doc, *form.leaves):
                 yield t
@@ -564,7 +565,7 @@ def _containing(doc, outer, inner):
 class TextCases(_SpacyBuiltin):
     """
     <dl>
-    <dt>'TextCases[$text$, $form$]'
+      <dt>'TextCases[$text$, $form$]'
       <dd>returns all elements of type $form$ in $text$ in order of their appearance.
     </dl>
 
@@ -599,7 +600,7 @@ class TextCases(_SpacyBuiltin):
 class TextPosition(_SpacyBuiltin):
     """
     <dl>
-    <dt>'TextPosition[$text$, $form$]'
+      <dt>'TextPosition[$text$, $form$]'
       <dd>returns the positions of elements of type $form$ in $text$ in order of their appearance.
     </dl>
 
@@ -628,7 +629,7 @@ class TextPosition(_SpacyBuiltin):
 class TextStructure(_SpacyBuiltin):
     """
     <dl>
-    <dt>'TextStructure[$text$, $form$]'
+      <dt>'TextStructure[$text$, $form$]'
       <dd>returns the grammatical structure of $text$ as $form$.
     </dl>
 
@@ -686,11 +687,13 @@ class TextStructure(_SpacyBuiltin):
 class WordSimilarity(_SpacyBuiltin):
     """
     <dl>
-    <dt>'WordSimilarity[$text1$, $text2]'
+      <dt>'WordSimilarity[$text1$, $text2$]'
       <dd>returns a real-valued measure of semantic similarity of two texts or words.
-    <dt>'WordSimilarity[{$text1$, $i1}, {$text2, $j1$}]'
+
+      <dt>'WordSimilarity[{$text1$, $i1$}, {$text2, $j1$}]'
       <dd>returns a measure of similarity of two words within two texts.
-    <dt>'WordSimilarity[{$text1$, {$i1, $i2, ...}}, {$text2, {$j1$, $j2$, ...}}]'
+
+      <dt>'WordSimilarity[{$text1$, {$i1$, $i2$, ...}}, {$text2, {$j1$, $j2$, ...}}]'
       <dd>returns a measure of similarity of multiple words within two texts.
     </dl>
 
@@ -775,15 +778,18 @@ class WordSimilarity(_SpacyBuiltin):
 class WordStem(Builtin):
     """
     <dl>
-    <dt>'WordStem[$text$]'
+      <dt>'WordStem[$word$]'
       <dd>returns a stemmed form of $word$, thereby reducing an inflected form to its root.
+
+      <dt>'WordStem[{$word1$, $word2$, ...}]'
+      <dd>returns a stemmed form for list of $word$, thereby reducing an inflected form to its root.
     </dl>
 
     >> WordStem["towers"]
      = tower
 
-    >> WordStem[{"towers", "knights", "queens"}]
-     = {tower, knight, queen}
+    >> WordStem[{"heroes", "roses", "knights", "queens"}]
+     = {hero, rose, knight, queen}
     """
 
     requires = ("nltk",)
@@ -801,12 +807,12 @@ class WordStem(Builtin):
         return WordStem._get_porter_stemmer().stem(w)
 
     def apply(self, word, evaluation):
-        "WordStem[word_System`String]"
+        "WordStem[word_String]"
         stemmer = self._get_porter_stemmer()
         return String(stemmer.stem(word.get_string_value()))
 
     def apply_list(self, words, evaluation):
-        "WordStem[words_System`List]"
+        "WordStem[words_List]"
         if all(isinstance(w, String) for w in words.leaves):
             stemmer = self._get_porter_stemmer()
             return Expression(
@@ -969,7 +975,7 @@ class _WordNetBuiltin(Builtin):
 class WordDefinition(_WordNetBuiltin):
     """
     <dl>
-    <dt>'WordDefinition[$word$]'
+      <dt>'WordDefinition[$word$]'
       <dd>returns a definition of $word$ or Missing["Available"] if $word$ is not known.
     </dl>
 
@@ -1081,20 +1087,30 @@ class WordProperty:
 class _WordListBuiltin(_WordNetBuiltin):
     _dictionary = {}
 
-    def _words(self, language_name, type, evaluation):
+    def _words(self, language_name, ilk, evaluation):
         wordnet, language_code = self._load_wordnet(evaluation, language_name)
 
         if not wordnet:
             return
 
-        key = "%s.%s" % (language_code, type)
+        key = "%s.%s" % (language_code, ilk)
         words = self._dictionary.get(key)
         if not words:
             try:
-                if type == "All":
+                if ilk == "All":
                     filtered_pos = [None]
                 else:
-                    filtered_pos = _wordnet_type_to_pos[type]
+                    try:
+                        filtered_pos = _wordnet_type_to_pos[ilk]
+                    except KeyError:
+                        evaluation.message(
+                            self.get_name(),
+                            "wordnet",
+                            "type: %s is should be in %s"
+                            % (ilk._wordnet_type_to_pos.keys()),
+                        )
+                        return
+
                 words = []
                 for pos in filtered_pos:
                     words.extend(list(wordnet.all_lemma_names(pos, language_code)))
@@ -1110,9 +1126,10 @@ class _WordListBuiltin(_WordNetBuiltin):
 class WordData(_WordListBuiltin):
     """
     <dl>
-    <dt>'WordData[$word$]'
+      <dt>'WordData[$word$]'
       <dd>returns a list of possible senses of a word.
-    <dt>'WordData[$word$, $property$]'
+
+      <dt>'WordData[$word$, $property$]'
       <dd>returns detailed information about a word regarding $property$, e.g. "Definitions" or "Examples".
     </dl>
 
@@ -1267,7 +1284,7 @@ class WordData(_WordListBuiltin):
 class DictionaryWordQ(_WordNetBuiltin):
     """
     <dl>
-    <dt>'DictionaryWordQ[$word$]'
+      <dt>'DictionaryWordQ[$word$]'
       <dd>returns True if $word$ is a word usually found in dictionaries, and False otherwise.
     </dl>
 
@@ -1297,7 +1314,7 @@ class DictionaryWordQ(_WordNetBuiltin):
 class DictionaryLookup(_WordListBuiltin):
     """
     <dl>
-    <dt>'DictionaryLookup[$word$]'
+      <dt>'DictionaryLookup[$word$]'
       <dd>lookup words that match the given $word$ or pattern.
 
     <dt>'DictionaryLookup[$word$, $n$]'
@@ -1357,9 +1374,10 @@ class DictionaryLookup(_WordListBuiltin):
 class WordList(_WordListBuiltin):
     """
     <dl>
-    <dt>'WordList[]'
+      <dt>'WordList[]'
       <dd>returns a list of common words.
-    <dt>'WordList[$type]'
+
+      <dt>'WordList[$type$]'
       <dd>returns a list of common words of type $type$.
     </dl>
 
@@ -1387,11 +1405,13 @@ class WordList(_WordListBuiltin):
 class RandomWord(_WordListBuiltin):
     """
     <dl>
-    <dt>'RandomWord[]'
+      <dt>'RandomWord[]'
       <dd>returns a random word.
-    <dt>'RandomWord[$type$]'
+
+      <dt>'RandomWord[$type$]'
       <dd>returns a random word of the given $type$, e.g. of type "Noun" or "Adverb".
-    <dt>'RandomWord[$type$, $n$]'
+
+      <dt>'RandomWord[$type$, $n$]'
       <dd>returns $n$ random words of the given $type$.
     </dl>
     """
@@ -1473,6 +1493,7 @@ class Pluralize(Builtin):
         from pattern.en import pluralize
 
         return String(pluralize(word.get_string_value()))
+
 
 class SpellingCorrectionList(Builtin):
     """
