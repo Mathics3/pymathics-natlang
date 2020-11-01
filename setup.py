@@ -4,7 +4,7 @@
 import sys
 import platform
 import os
-from setuptools import setup, find_packages
+from setuptools import setup, find_namespace_packages
 
 # Ensure user has the correct Python version
 if sys.version_info < (3, 6):
@@ -19,9 +19,7 @@ is_PyPy = platform.python_implementation() == "PyPy"
 setup(
     name="pymathics-natlang",
     version=__version__,
-    packages=[
-        "pymathics.natlang",
-    ],
+    packages=find_namespace_packages(include=["pymathics.*"]),
     install_requires=["mathics>=1.0", "nltk", "spacy"],
     # don't pack Mathics in egg because of media files, etc.
     zip_safe=False,

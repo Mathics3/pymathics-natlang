@@ -290,8 +290,6 @@ class WordFrequencyData(_SpacyBuiltin):
     </dl>
     """
 
-    context = "PyMathics`"
-
     # Mathematica uses the gargantuan Google n-gram corpus, see
     # http://commondatastorage.googleapis.com/books/syntactic-ngrams/index.html
 
@@ -316,8 +314,6 @@ class WordCount(_SpacyBuiltin):
      = 4
     """
 
-    context = "PyMathics`"
-
     def apply(self, text, evaluation, options):
         "WordCount[text_String, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.get_string_value(), evaluation, options)
@@ -326,7 +322,6 @@ class WordCount(_SpacyBuiltin):
             return Integer(sum(1 for word in doc if word.pos != punctuation))
 
 
-from trepan.api import debug; debug()
 class TextWords(_SpacyBuiltin):
     """
     <dl>
@@ -339,8 +334,6 @@ class TextWords(_SpacyBuiltin):
     >> TextWords["Hickory, dickory, dock! The mouse ran up the clock."]
      = {Hickory, dickory, dock, The, mouse, ran, up, the, clock}
     """
-
-    context = "PyMathics`"
 
     def apply(self, text, evaluation, options):
         "TextWords[text_String, OptionsPattern[%(name)s]]"
@@ -426,8 +419,6 @@ class DeleteStopwords(_SpacyBuiltin):
      = Old Man Apulia, conduct peculiar
     """
 
-    context = "PyMathics`"
-
     def apply_list(self, l, evaluation, options):
         "DeleteStopwords[l_List, OptionsPattern[%(name)s]]"
         is_stop = self._is_stop_lambda(evaluation, options)
@@ -474,8 +465,6 @@ class WordFrequency(_SpacyBuiltin):
     >> WordFrequency["Apple Tree", "apple", IgnoreCase -> True]
      = 0.5
     """
-
-    context = "PyMathics`"
 
     options = _SpacyBuiltin.options
     options.update({"IgnoreCase": "False"})
@@ -589,8 +578,6 @@ class TextCases(_SpacyBuiltin):
      = {Albert Einstein, E. Fermi, L. Szilard}
     """
 
-    context = "PyMathics`"
-
     def apply(self, text, form, evaluation, options):
         "TextCases[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.get_string_value(), evaluation, options)
@@ -620,8 +607,6 @@ class TextPosition(_SpacyBuiltin):
      = {{1, 9}, {15, 24}}
     """
 
-    context = "PyMathics`"
-
     def apply(self, text, form, evaluation, options):
         "TextPosition[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.get_string_value(), evaluation, options)
@@ -650,8 +635,6 @@ class TextStructure(_SpacyBuiltin):
     >> TextStructure["The cat sat on the mat.", "ConstituentString"]
      = {(Sentence, ((Verb Phrase, (Noun Phrase, (Determiner, The), (Noun, cat)), (Verb, sat), (Prepositional Phrase, (Preposition, on), (Noun Phrase, (Determiner, the), (Noun, mat))), (Punctuation, .))))}
     """
-
-    context = "PyMathics`"
 
     _root_pos = set(i for i, names in _pos_tags.items() if names[1])
 
@@ -720,8 +703,6 @@ class WordSimilarity(_SpacyBuiltin):
     >> NumberForm[WordSimilarity[{"An ocean full of water.", {2, 2}}, { "A desert full of sand.", {2, 5}}], 3]
      = {0.253, 0.177}
     """
-
-    context = "PyMathics`"
 
     messages = _merge_dictionaries(
         _SpacyBuiltin.messages,
@@ -807,8 +788,6 @@ class WordStem(Builtin):
 
     requires = ("nltk",)
 
-    context = "PyMathics`"
-
     _stemmer = None
 
     @staticmethod
@@ -822,12 +801,12 @@ class WordStem(Builtin):
         return WordStem._get_porter_stemmer().stem(w)
 
     def apply(self, word, evaluation):
-        "WordStem[word_String]"
+        "WordStem[word_System`String]"
         stemmer = self._get_porter_stemmer()
         return String(stemmer.stem(word.get_string_value()))
 
     def apply_list(self, words, evaluation):
-        "WordStem[words_List]"
+        "WordStem[words_System`List]"
         if all(isinstance(w, String) for w in words.leaves):
             stemmer = self._get_porter_stemmer()
             return Expression(
@@ -998,8 +977,6 @@ class WordDefinition(_WordNetBuiltin):
      = {a metric unit of weight equal to one thousandth of a kilogram}
     """
 
-    context = "PyMathics`"
-
     def apply(self, word, evaluation, options):
         "WordDefinition[word_String, OptionsPattern[%(name)s]]"
         wordnet, language_code = self._load_wordnet(
@@ -1164,8 +1141,6 @@ class WordData(_WordListBuiltin):
         },
     )
 
-    context = "PyMathics`"
-
     def _parse_word(self, word):
         if isinstance(word, String):
             return word.get_string_value().lower()
@@ -1303,8 +1278,6 @@ class DictionaryWordQ(_WordNetBuiltin):
      = False
     """
 
-    context = "PyMathics`"
-
     def apply(self, word, evaluation, options):
         "DictionaryWordQ[word_,  OptionsPattern[%(name)s]]"
         if not isinstance(word, String):
@@ -1334,8 +1307,6 @@ class DictionaryLookup(_WordListBuiltin):
     >> DictionaryLookup["bake" ~~ ___, 3]
      = {bake, bakeapple, baked}
     """
-
-    context = "PyMathics`"
 
     def compile(self, pattern, evaluation):
         re_patt = to_regex(pattern, evaluation)
@@ -1396,8 +1367,6 @@ class WordList(_WordListBuiltin):
      = 9.3
     """
 
-    context = "PyMathics`"
-
     def apply(self, evaluation, options):
         "WordList[OptionsPattern[%(name)s]]"
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
@@ -1426,8 +1395,6 @@ class RandomWord(_WordListBuiltin):
       <dd>returns $n$ random words of the given $type$.
     </dl>
     """
-
-    context = "PyMathics`"
 
     def _random_words(self, type, n, evaluation, options):
         words = self._words(self._language_name(evaluation, options), type, evaluation)
@@ -1469,8 +1436,6 @@ class LanguageIdentify(Builtin):
      = German
     """
 
-    context = "PyMathics`"
-
     requires = (
         "langid",
         "pycountry",
@@ -1501,8 +1466,6 @@ class Pluralize(Builtin):
      = potatoes
     """
 
-    context = "PyMathics`"
-
     requires = ("pattern",)
 
     def apply(self, word, evaluation):
@@ -1510,7 +1473,6 @@ class Pluralize(Builtin):
         from pattern.en import pluralize
 
         return String(pluralize(word.get_string_value()))
-
 
 class SpellingCorrectionList(Builtin):
     """
@@ -1524,8 +1486,6 @@ class SpellingCorrectionList(Builtin):
     >> SpellingCorrectionList["hipopotamus"]
      = {hippopotamus...}
     """
-
-    context = "PyMathics`"
 
     requires = ("enchant",)
 
