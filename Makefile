@@ -8,15 +8,19 @@ GIT2CL ?= admin-tools/git2cl
 PYTHON ?= python3
 PIP ?= pip3
 RM  ?= rm
-LANG ?= en
+
+# Two-letter language code, e.g. fr, zh
+lang ?= en
 
 # Size of wordlist used
 # sm=small, lg=large, md=medium.
-WORDLIST_SIZE ?=md
+WORDLIST_SIZE ?= md
+SPACY_DOWNLOAD ?= $(lang)_core_web_$(WORDLIST_SIZE)
 
 .PHONY: all build \
    check clean \
    develop dist doc doc-data \
+   pypi-setup \
    pytest \
    rmChangeLog \
    test
@@ -24,26 +28,29 @@ WORDLIST_SIZE ?=md
 #: Default target - same as "develop"
 all: develop
 
-#: Word-list data. Customize with LANG (and eventually WORDLIST_SIZE) variables
+#: Word-list data. Customize with lang and eventually WORDLIST_SIZE variables
 wordlist:
 	$(PYTHON) -m nltk.downloader wordnet omw
-	$(PYTHON) -m spacy download $(LANG)
-#	# $(PYTHON) -m spacy download $(LANG)_core_web_$(WORDLIST_SIZE)
+	$(PYTHON) -m spacy download $(SPACY_DOWNLOAD)
 
 #: build everything needed to install
-build:
+build: pypi-setup
 	$(PYTHON) ./setup.py build
 
-#: Set up to run from the source tree
-develop:
+#: Check Python version, and install PyPI dependencies
+pypi-setup:
 	$(PIP) install -e .
+
+#: Set up to run from the source tree
+develop: pypi-setup
 	$(MAKE) wordlist
 
 #: Install mathics
-install:
+install: pypi-setup
 	$(PYTHON) setup.py install
 
-check: pytest doctest djangotest gstest
+# Run tests
+check: pytest doctest
 
 #: Remove derived files
 clean: clean-pyc

@@ -1,14 +1,17 @@
-Natural Language Tookkit module.
+Mathics Natural Language Tookkit module.
 
-To use this module, you will need to install nltk and spacy,
-Python modules and then install some data from English words:
+To use build module, you will need to install Python module `nltk
+<https://pypi.org/project/nltk/>`_ and `spacy
+<https://pypi.org/project/spacy/>`_, and then install some data from
+Language-specific words:
 
 ::
 
-   $ make develop
+   $ make develop  # or make install
 
-If you would like to install works for another language set the
-variable ``LANG``. For example:
+The above ``make`` command uses defaults the language to English. If
+you would like to install for another language set the variable
+``LANG``. For example:
 
 ::
 
