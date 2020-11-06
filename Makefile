@@ -45,7 +45,7 @@ pypi-setup:
 develop: pypi-setup
 	$(MAKE) wordlist
 
-#: Install mathics
+#: Install pymathics.natlang
 install: pypi-setup
 	$(PYTHON) setup.py install
 

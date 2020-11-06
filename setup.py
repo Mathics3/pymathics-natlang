@@ -40,6 +40,9 @@ setup(
         "Topic :: Scientific/Engineering :: Mathematics",
         "Topic :: Scientific/Engineering :: Physics",
         "Topic :: Software Development :: Interpreters",
+        "Topic :: Scientific/Engineering :: Human Machine Interfaces",
+        "Topic :: Text Processing",
+        "Topic :: Text Processing :: Linguistic",
     ],
     # TODO: could also include long_description, download_url,
 )
