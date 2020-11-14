@@ -16,6 +16,21 @@ exec(compile(open("pymathics/natlang/version.py").read(), "version.py", "exec"))
 
 is_PyPy = platform.python_implementation() == "PyPy"
 
+# Install a wordlist.
+# Environment variables "lang", "WORDLIST_SIZE", and "SPACY_DOWNLOAD" override defaults.
+
+# Two-letter language code, e.g. fr, zh
+lang = os.environ.get("lang", "en")
+
+# Size of wordlist used
+# sm=small, lg=large, md=medium.
+WORDLIST_SIZE = os.environ.get("WORDLIST_SIZE", "md")
+
+SPACY_DOWNLOAD = os.environ.get("SPACE_DOWNLOAD", "%s_core_web_%s" % (lang, WORDLIST_SIZE))
+
+os.system("%s -m nltk.downloader wordnet omw" % sys.executable)
+os.system("%s -m spacy download %s" % (sys.executable, lang))
+
 setup(
     name="pymathics-natlang",
     version=__version__,

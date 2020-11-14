@@ -1,4 +1,7 @@
 *~
 /.python-version
+/ChangeLog
+/build
+/dist
 /pymathics_natlang.egg-info
 __pycache__
