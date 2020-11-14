@@ -24,3 +24,19 @@ and then create a new folder under
 ``$HOME/nltk_data/corpora/omw/your_language`` where you put the file
 from wiki/wn-wikt-your_language.tab, and rename it to
 wn-data-your_language.tab.
+
+If you get the message
+
+::
+
+   OSError: [E050] Can't find model 'en'. It doesn't seem to be a shortcut link, a Python package or a valid path to a data directory.
+
+There is a problem with the ``spacy`` the library for advanced Natural Language Processing in Python.
+
+You might be able to fix this running:
+
+::
+
+   python -m spacy download en
+
+Adjust "python" and "en" (the language you want) above as needed.

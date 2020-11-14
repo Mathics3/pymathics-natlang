@@ -29,6 +29,7 @@ for pyversion in $PYVERSIONS; do
     # Pick out first two number of version, e.g. 3.7.9 -> 37
     first_two=$(echo $pyversion | cut -d'.' -f 1-2 | sed -e 's/\.//')
     rm -fr build
+    python setup.py develop
     python setup.py bdist_egg
     python setup.py bdist_wheel
     python setup.py bdist_wheel --universal

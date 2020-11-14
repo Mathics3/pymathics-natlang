@@ -39,6 +39,7 @@ setup(
     # don't pack Mathics in egg because of media files, etc.
     zip_safe=False,
     maintainer="Mathics Group",
+    long_description_content_type="text/x-rst",
     # metadata for upload to PyPI
     classifiers=[
         "Intended Audience :: Developers",
