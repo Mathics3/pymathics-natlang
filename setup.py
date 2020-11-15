@@ -26,16 +26,13 @@ lang = os.environ.get("lang", "en")
 # sm=small, lg=large, md=medium.
 WORDLIST_SIZE = os.environ.get("WORDLIST_SIZE", "md")
 
-SPACY_DOWNLOAD = os.environ.get("SPACE_DOWNLOAD", "%s_core_web_%s" % (lang, WORDLIST_SIZE))
-
-os.system("%s -m nltk.downloader wordnet omw" % sys.executable)
-os.system("%s -m spacy download %s" % (sys.executable, lang))
+SPACY_DOWNLOAD = os.environ.get("SPACY_DOWNLOAD", "%s" % (lang,))
 
 setup(
     name="pymathics-natlang",
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
-    install_requires=["mathics>=1.0", "nltk", "spacy"],
+    install_requires=["mathics>=1.0", "nltk", "spacy<3.0"],
     # don't pack Mathics in egg because of media files, etc.
     zip_safe=False,
     maintainer="Mathics Group",
@@ -62,3 +59,6 @@ setup(
     ],
     # TODO: could also include long_description, download_url,
 )
+
+os.system("%s -m nltk.downloader wordnet omw" % sys.executable)
+os.system("%s -m spacy download %s" % (sys.executable, lang))

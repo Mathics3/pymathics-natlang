@@ -1,3 +1,5 @@
+|Pypi Installs| |Latest Version| |Supported Python Versions|
+
 Mathics Natural Language Tookkit module.
 
 To use build module, you will need to install Python module `nltk
@@ -40,3 +42,8 @@ You might be able to fix this running:
    python -m spacy download en
 
 Adjust "python" and "en" (the language you want) above as needed.
+
+.. |Latest Version| image:: https://badge.fury.io/py/pymathics-natlang.svg
+		 :target: https://badge.fury.io/py/pymathics-natlang
+.. |Pypi Installs| image:: https://pepy.tech/badge/pymathics-natlang
+.. |Supported Python Versions| image:: https://img.shields.io/pypi/pyversions/pymathics-natlang.svg
