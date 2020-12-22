@@ -1,6 +1,6 @@
 |Pypi Installs| |Latest Version| |Supported Python Versions|
 
-Mathics Natural Language Tookkit module.
+Mathics Natural Language Toolkit module.
 
 To use build module, you will need to install Python module `nltk
 <https://pypi.org/project/nltk/>`_ and `spacy
