@@ -49,8 +49,8 @@ develop: pypi-setup
 install: pypi-setup
 	$(PYTHON) setup.py install
 
-# Run tests
-check: pytest doctest
+#: Run tests
+check: pytest
 
 #: Remove derived files
 clean: clean-pyc
