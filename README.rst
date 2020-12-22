@@ -2,6 +2,27 @@
 
 Mathics Natural Language Toolkit module.
 
+
+Example Session
+---------------
+
+::
+
+   $ mathicsscript
+   In[1]:= LoadModule["pymathics.natlang"]
+   Out[1]= pymathics.natlang
+   In[2]= Pluralize["try"]
+   Out[2]= tries
+   In[3]= WordFrequency["Apple Tree and apple", "apple", IgnoreCase -> True]
+   Out[3]= 0.5
+   In[4] = TextCases["I was in London last year.", "Pronoun"]
+   Out[3]= {I}
+
+More examples can be found in the `test file <https://github.com/Mathics3/pymathics-natlang/blob/master/test/test_natlang.py>`_.
+
+Installing and Running
+----------------------
+
 To use build module, you will need to install Python module `nltk
 <https://pypi.org/project/nltk/>`_ and `spacy
 <https://pypi.org/project/spacy/>`_, and then install some data from
@@ -47,3 +68,5 @@ Adjust "python" and "en" (the language you want) above as needed.
 		 :target: https://badge.fury.io/py/pymathics-natlang
 .. |Pypi Installs| image:: https://pepy.tech/badge/pymathics-natlang
 .. |Supported Python Versions| image:: https://img.shields.io/pypi/pyversions/pymathics-natlang.svg
+.. |Packaging status| image:: https://repology.org/badge/vertical-allrepos/pymathics-natlang.svg
+			    :target: https://repology.org/project/pymathics-natlang/versions

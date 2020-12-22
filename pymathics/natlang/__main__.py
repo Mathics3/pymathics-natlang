@@ -64,7 +64,7 @@ import math
 
 
 def _parse_nltk_lookup_error(e):
-    m = re.search("Resource '([^']+)' not found\.", str(e))
+    m = re.search(r"Resource '([^']+)' not found\.", str(e))
     if m:
         return m.group(1)
     else:

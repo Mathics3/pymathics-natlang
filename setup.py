@@ -4,12 +4,24 @@
 import sys
 import platform
 import os
+import os.path as osp
 from setuptools import setup, find_namespace_packages
 
 # Ensure user has the correct Python version
 if sys.version_info < (3, 6):
     print("Mathics support Python 3.6 and above; you have %d.%d" % sys.version_info[:2])
     sys.exit(-1)
+
+def get_srcdir():
+    filename = osp.normcase(osp.dirname(osp.abspath(__file__)))
+    return osp.realpath(filename)
+
+
+def read(*rnames):
+    return open(osp.join(get_srcdir(), *rnames)).read()
+
+# Get/set VERSION and long_description from files
+long_description = read("README.rst") + "\n"
 
 # stores __version__ in the current namespace
 exec(compile(open("pymathics/natlang/version.py").read(), "version.py", "exec"))
@@ -33,9 +45,9 @@ setup(
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
     install_requires=["Mathics3>=1.1.0", "nltk", "spacy<3.0", "pattern"],
-    # don't pack Mathics in egg because of media files, etc.
     zip_safe=False,
     maintainer="Mathics Group",
+    long_description=long_description,
     long_description_content_type="text/x-rst",
     # metadata for upload to PyPI
     classifiers=[
