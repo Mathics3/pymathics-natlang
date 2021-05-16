@@ -44,7 +44,7 @@ setup(
     name="pymathics-natlang",
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
-    install_requires=["Mathics3>=1.1.0", "nltk", "spacy<3.0", "pattern"],
+    install_requires=["Mathics3>=2.2.0", "nltk", "spacy<3.0", "pattern"],
     zip_safe=False,
     maintainer="Mathics Group",
     long_description=long_description,

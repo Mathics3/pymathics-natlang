@@ -42,7 +42,7 @@ Natural language functions
 # for spacy, use SPACY_DATA; the latter is a custom Mathics variable.
 
 from mathics.builtin.base import Builtin, MessageException
-from mathics.builtin.randomnumbers import RandomEnv
+from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.builtin.codetables import iso639_3
 from mathics.builtin.strings import to_regex, anchor_pattern
 from mathics.core.expression import (
