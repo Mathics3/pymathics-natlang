@@ -1,6 +1,11 @@
 CHANGES
 =======
 
+2.2.0
+-----
+
+Re-Release to use released Mathics 2.2.0
+
 1.1.0
 -----
 
