@@ -31,8 +31,8 @@ is_PyPy = platform.python_implementation() == "PyPy"
 # Install a wordlist.
 # Environment variables "lang", "WORDLIST_SIZE", and "SPACY_DOWNLOAD" override defaults.
 
-# Two-letter language code, e.g. fr, zh
-lang = os.environ.get("lang", "en")
+# Full package name with two-letter language code, e.g. fr, zh
+lang = os.environ.get("lang", "en_core_web_sm")
 
 # Size of wordlist used
 # sm=small, lg=large, md=medium.
@@ -44,7 +44,7 @@ setup(
     name="pymathics-natlang",
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
-    install_requires=["Mathics3>=2.2.0", "nltk>=3.6.1", "spacy<3.0",
+    install_requires=["Mathics3>=2.2.0", "nltk>=3.6.1", "spacy>=3.4",
                       "llvmlite>=0.36", "joblib>=1.0.1",
                       "click>=7.1", "six>=1.11.0",
                       "pattern>=3.6.0", "wasabi<1.1.0,>=0.8.2"],
