@@ -12,6 +12,7 @@ if sys.version_info < (3, 6):
     print("Mathics support Python 3.6 and above; you have %d.%d" % sys.version_info[:2])
     sys.exit(-1)
 
+
 def get_srcdir():
     filename = osp.normcase(osp.dirname(osp.abspath(__file__)))
     return osp.realpath(filename)
@@ -19,6 +20,7 @@ def get_srcdir():
 
 def read(*rnames):
     return open(osp.join(get_srcdir(), *rnames)).read()
+
 
 # Get/set VERSION and long_description from files
 long_description = read("README.rst") + "\n"
@@ -44,10 +46,17 @@ setup(
     name="pymathics-natlang",
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
-    install_requires=["Mathics3>=2.2.0", "nltk>=3.6.1", "spacy>=3.4",
-                      "llvmlite>=0.36", "joblib>=1.0.1",
-                      "click>=7.1", "six>=1.11.0",
-                      "pattern>=3.6.0", "wasabi<1.1.0,>=0.8.2"],
+    install_requires=[
+        "Mathics3 >= 5.0.0.dev0,<5.0.1",
+        "click>=7.1",
+        "joblib>=1.0.1",
+        "llvmlite>=0.36",
+        "nltk>=3.6.1",
+        "pattern>=3.6.0",
+        "six>=1.11.0",
+        "spacy>=3.4",
+        "wasabi<1.1.0,>=0.8.2",
+    ],
     zip_safe=False,
     maintainer="Mathics Group",
     long_description=long_description,

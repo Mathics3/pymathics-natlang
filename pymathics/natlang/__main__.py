@@ -45,15 +45,16 @@ from mathics.builtin.base import Builtin, MessageException
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.builtin.codetables import iso639_3
 from mathics.builtin.strings import to_regex, anchor_pattern
+from mathics.core.atoms import Integer, String, Real
 from mathics.core.expression import (
     Expression,
-    String,
-    Integer,
-    Real,
     Symbol,
     strip_context,
     string_list,
 )
+from mathics.core.listg import to_list_expression
+from mathics.core.symbols import SymbolDivide
+from mathics.core.systemsymbols import SymbolN
 
 import os
 import re
@@ -493,7 +494,7 @@ class WordFrequency(_SpacyBuiltin):
                 text = text.lower()
             if text in words:
                 n += 1
-        return Expression("N", Expression("Divide", n, len(doc)))
+        return Expression(SymbolN, Expression(SymbolDivide, Integer(n), Integer(len(doc))))
 
 
 class Containing(Builtin):
@@ -583,7 +584,7 @@ class TextCases(_SpacyBuiltin):
         "TextCases[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.get_string_value(), evaluation, options)
         if doc:
-            return Expression("List", *[t.text for t in _cases(doc, form)])
+            return to_list_expression(*[t.text for t in _cases(doc, form)])
 
     def apply_n(self, text, form, n, evaluation, options):
         "TextCases[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
