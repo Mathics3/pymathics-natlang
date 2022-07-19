@@ -17,22 +17,22 @@ def test_natlang():
         ),
         (
             'TextWords["Hickory, dickory, dock! The mouse ran up the clock."]',
-            'System`List["Hickory", "dickory", "dock", "The", "mouse", "ran", "up", "the", "clock"]',
+            '{"Hickory", "dickory", "dock", "The", "mouse", "ran", "up", "the", "clock"}',
             "TextWords",
         ),
         (
             'TextSentences["Night and day. Day and night."]',
-            'System`List["Night and day.", "Day and night."]',
+            '{"Night and day.", "Day and night."}',
             "TextSentences",
         ),
         (
             'TextSentences["Mr. Jones met Mrs. Jones."]',
-            'System`List["Mr. Jones met Mrs. Jones."]',
+            '{"Mr. Jones met Mrs. Jones."}',
             "TextSentences with Abbreviations",
         ),
         (
             'DeleteStopwords[{"Somewhere", "over", "the", "rainbow"}]',
-            'System`List["rainbow"]',
+            '{"rainbow"}',
             "DeleteStopWords",
         ),
         (
@@ -42,7 +42,7 @@ def test_natlang():
         ),
         (
             'TextCases["I was in London last year.", "Pronoun"]',
-            'System`List["I"]',
+            '{"I"}',
             "TextCases",
         ),
     ):

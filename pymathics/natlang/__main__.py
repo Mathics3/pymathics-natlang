@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -41,27 +40,22 @@ Natural language functions
 # for nltk, use the environment variable NLTK_DATA to specify a custom data path (instead of $HOME/.nltk).
 # for spacy, use SPACY_DATA; the latter is a custom Mathics variable.
 
-from mathics.builtin.base import Builtin, MessageException
-from mathics.builtin.numbers.randomnumbers import RandomEnv
-from mathics.builtin.codetables import iso639_3
-from mathics.builtin.strings import to_regex, anchor_pattern
-from mathics.core.atoms import Integer, String, Real
-from mathics.core.expression import (
-    Expression,
-    Symbol,
-    strip_context,
-    string_list,
-)
-from mathics.core.listg import to_list_expression
-from mathics.core.symbols import SymbolDivide
-from mathics.core.systemsymbols import SymbolN
-
+import heapq
+import itertools
+import math
 import os
 import re
-import itertools
 from itertools import chain
-import heapq
-import math
+
+from mathics.builtin.atomic.strings import anchor_pattern, to_regex
+from mathics.builtin.base import Builtin, MessageException
+from mathics.builtin.codetables import iso639_3
+from mathics.builtin.numbers.randomnumbers import RandomEnv
+from mathics.core.atoms import Integer, Real, String
+from mathics.core.convert.expression import ListExpression, to_mathics_list
+from mathics.core.expression import Expression
+from mathics.core.symbols import Symbol, SymbolList, SymbolTrue, strip_context
+from mathics.core.systemsymbols import SymbolN
 
 
 def _parse_nltk_lookup_error(e):
@@ -137,7 +131,6 @@ try:
                 "Adverb": [nltk.corpus.wordnet.ADV],
             }
         )
-
 
 except ImportError:
     pass
@@ -240,7 +233,7 @@ class _SpacyBuiltin(Builtin):
             language_name = String("Undefined")
         if isinstance(language_name, String):
             language_code = _SpacyBuiltin._language_codes.get(
-                language_name.get_string_value()
+                language_name.value
             )
         if not language_code:
             evaluation.message(
@@ -256,7 +249,7 @@ class _SpacyBuiltin(Builtin):
             if "SPACY_DATA" in os.environ:
                 instance = spacy.load(language_code, via=os.environ["SPACY_DATA"])
             else:
-                instance = spacy.load(language_code)
+                instance = spacy.load(f"{language_code}_core_web_sm")
 
             _SpacyBuiltin._spacy_instances[language_code] = instance
             return instance
@@ -296,7 +289,7 @@ class WordFrequencyData(_SpacyBuiltin):
 
     def apply(self, word, evaluation, options):
         "WordFrequencyData[word_String,  OptionsPattern[%(name)s]]"
-        doc = self._nlp(word.get_string_value(), evaluation, options)
+        doc = self._nlp(word.value, evaluation, options)
         frequency = 0.0
         if doc:
             if len(doc) == 1:
@@ -317,7 +310,7 @@ class WordCount(_SpacyBuiltin):
 
     def apply(self, text, evaluation, options):
         "WordCount[text_String, OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
             return Integer(sum(1 for word in doc if word.pos != punctuation))
@@ -339,27 +332,24 @@ class TextWords(_SpacyBuiltin):
 
     def apply(self, text, evaluation, options):
         "TextWords[text_String, OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
-            return string_list(
-                "List",
-                [String(word.text) for word in doc if word.pos != punctuation],
-                evaluation,
+            return ListExpression(
+                *[String(word.text) for word in doc if word.pos != punctuation],
             )
 
     def apply_n(self, text, n, evaluation, options):
         "TextWords[text_String, n_Integer, OptionsPattern[%(name)s]]"
+        from trepan.api import debug; debug()
         doc = self._nlp(text.get_string_value(), evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
-            return string_list(
-                "List",
-                itertools.islice(
+            return ListExpression(
+                *itertools.islice(
                     (String(word.text) for word in doc if word.pos != punctuation),
                     n.get_int_value(),
                 ),
-                evaluation,
             )
 
 
@@ -387,20 +377,18 @@ class TextSentences(_SpacyBuiltin):
         "TextSentences[text_String, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.get_string_value(), evaluation, options)
         if doc:
-            return string_list(
-                "List", [String(sent.text) for sent in doc.sents], evaluation
+            return ListExpression(
+                *[String(sent.text) for sent in doc.sents]
             )
 
     def apply_n(self, text, n, evaluation, options):
         "TextSentences[text_String, n_Integer, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.get_string_value(), evaluation, options)
         if doc:
-            return string_list(
-                "List",
+            return ListExpression(
                 itertools.islice(
                     (String(sent.text) for sent in doc.sents), n.get_int_value()
                 ),
-                evaluation,
             )
 
 
@@ -433,11 +421,11 @@ class DeleteStopwords(_SpacyBuiltin):
                 elif not is_stop(s):
                     yield String(s)
 
-        return string_list("List", filter_words(l.leaves), evaluation)
+        return ListExpression(*list(filter_words(l.elements)))
 
     def apply_string(self, s, evaluation, options):
         "DeleteStopwords[s_String, OptionsPattern[%(name)s]]"
-        doc = self._nlp(s.get_string_value(), evaluation, options)
+        doc = self._nlp(s.value, evaluation, options)
         if doc:
             is_stop = self._is_stop_lambda(evaluation, options)
             if is_stop:
@@ -473,18 +461,18 @@ class WordFrequency(_SpacyBuiltin):
 
     def apply(self, text, word, evaluation, options):
         "WordFrequency[text_String, word_, OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if not doc:
             return
         if isinstance(word, String):
-            words = set((word.get_string_value(),))
+            words = set([word.value])
         elif word.get_head_name() == "System`Alternatives":
-            if not all(isinstance(a, String) for a in word.leaves):
+            if not all(isinstance(a, String) for a in word.elements):
                 return  # error
-            words = set(a.get_string_value() for a in word.leaves)
+            words = set(a.value for a in word.elements)
         else:
             return  # error
-        ignore_case = self.get_option(options, "IgnoreCase", evaluation).is_true()
+        ignore_case = self.get_option(options, "IgnoreCase", evaluation) is SymbolTrue
         if ignore_case:
             words = [w.lower() for w in words]
         n = 0
@@ -494,7 +482,9 @@ class WordFrequency(_SpacyBuiltin):
                 text = text.lower()
             if text in words:
                 n += 1
-        return Expression(SymbolN, Expression(SymbolDivide, Integer(n), Integer(len(doc))))
+        return Expression(
+            SymbolN, Integer(n) / Integer(len(doc))
+        )
 
 
 class Containing(Builtin):
@@ -505,12 +495,12 @@ def _cases(doc, form):
     if isinstance(form, String):
         generators = [_forms.get(form.get_string_value())]
     elif form.get_head_name() == "System`Alternatives":
-        if not all(isinstance(f, String) for f in form.leaves):
+        if not all(isinstance(f, String) for f in form.elements):
             return  # error
-        generators = [_forms.get(f.get_string_value()) for f in form.leaves]
+        generators = [_forms.get(f.get_string_value()) for f in form.elements]
     elif form.get_head_name() == "PyMathics`Containing":
-        if len(form.leaves) == 2:
-            for t in _containing(doc, *form.leaves):
+        if len(form.elements) == 2:
+            for t in _containing(doc, *form.elements):
                 yield t
             return
         else:
@@ -582,18 +572,17 @@ class TextCases(_SpacyBuiltin):
 
     def apply(self, text, form, evaluation, options):
         "TextCases[text_String, form_,  OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
-            return to_list_expression(*[t.text for t in _cases(doc, form)])
+            return to_mathics_list(*[t.text for t in _cases(doc, form)])
 
     def apply_n(self, text, form, n, evaluation, options):
         "TextCases[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
-            return Expression(
-                "List",
+            return to_mathics_list(
                 *itertools.islice(
-                    (t.text for t in _cases(doc, form)), n.get_int_value()
+                    (t.text for t in _cases(doc, form)), n.value
                 )
             )
 
@@ -611,9 +600,9 @@ class TextPosition(_SpacyBuiltin):
 
     def apply(self, text, form, evaluation, options):
         "TextPosition[text_String, form_,  OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
-            return Expression("List", *[_position(t) for t in _cases(doc, form)])
+            return ListExpression(*[_position(t) for t in _cases(doc, form)])
 
     def apply_n(self, text, form, n, evaluation, options):
         "TextPosition[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
@@ -682,7 +671,7 @@ class TextStructure(_SpacyBuiltin):
         if doc:
             tree = self._to_tree(list(doc))
             sents = ["(Sentence, (%s))" % self._to_constituent_string(x) for x in tree]
-            return Expression("List", *[String(s) for s in sents])
+            return to_mathics_list(*sents, elements_conversion_fn = String)
 
 
 class WordSimilarity(_SpacyBuiltin):
@@ -737,17 +726,17 @@ class WordSimilarity(_SpacyBuiltin):
                     i1.get_head_name() == "System`List"
                     and i2.get_head_name() == "System`List"
                 ):
-                    if len(i1.leaves) != len(i2.leaves):
+                    if len(i1.elements) != len(i2.elements):
                         evaluation.message("TextSimilarity", "idxfmt")
                         return
                     if any(
-                        not all(isinstance(i, Integer) for i in l.leaves)
+                        not all(isinstance(i, Integer) for i in l.elements)
                         for l in (i1, i2)
                     ):
                         evaluation.message("TextSimilarity", "idxfmt")
                         return
-                    indices1 = [i.get_int_value() for i in i1.leaves]
-                    indices2 = [i.get_int_value() for i in i2.leaves]
+                    indices1 = [i.get_int_value() for i in i1.elements]
+                    indices2 = [i.get_int_value() for i in i2.elements]
                     multiple = True
                 elif isinstance(i1, Integer) and isinstance(i2, Integer):
                     indices1 = [i1.get_int_value()]
@@ -814,11 +803,11 @@ class WordStem(Builtin):
 
     def apply_list(self, words, evaluation):
         "WordStem[words_List]"
-        if all(isinstance(w, String) for w in words.leaves):
+        if all(isinstance(w, String) for w in words.elements):
             stemmer = self._get_porter_stemmer()
             return Expression(
                 "List",
-                *[String(stemmer.stem(w.get_string_value())) for w in words.leaves]
+                *[String(stemmer.stem(w.get_string_value())) for w in words.elements]
             )
 
 
@@ -1163,10 +1152,10 @@ class WordData(_WordListBuiltin):
         if isinstance(word, String):
             return word.get_string_value().lower()
         elif word.get_head_name() == "System`List":
-            if len(word.leaves) == 3 and all(
-                isinstance(s, String) for s in word.leaves
+            if len(word.elements) == 3 and all(
+                isinstance(s, String) for s in word.elements
             ):
-                return tuple(s.get_string_value() for s in word.leaves)
+                return tuple(s.get_string_value() for s in word.elements)
 
     def _standard_property(
         self, py_word, py_form, py_property, wordnet, language_code, evaluation
@@ -1465,7 +1454,6 @@ class LanguageIdentify(Builtin):
     def apply(self, text, evaluation):
         "LanguageIdentify[text_String]"
         import langid  # see https://github.com/saffsd/langid.py
-
         # an alternative: https://github.com/Mimino666/langdetect
         import pycountry
 

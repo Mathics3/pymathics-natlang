@@ -48,12 +48,11 @@ setup(
     packages=find_namespace_packages(include=["pymathics.*"]),
     install_requires=[
         "Mathics3 >= 5.0.0.dev0,<5.0.1",
-        "click>=7.1",
+        "click>=8.0",
         "joblib>=1.0.1",
         "llvmlite>=0.36",
         "nltk>=3.6.1",
         "pattern>=3.6.0",
-        "six>=1.11.0",
         "spacy>=3.4",
         "wasabi<1.1.0,>=0.8.2",
     ],

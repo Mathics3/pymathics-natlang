@@ -8,23 +8,29 @@ on:
 
 jobs:
   build:
+    env:
+      LDFLAGS: "-L/usr/local/opt/llvm@11/lib"
+      CPPFLAGS: "-I/usr/local/opt/llvm@11/include"
     runs-on: macos-latest
     strategy:
       matrix:
         os: [macOS]
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8, 3.9]
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v2
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        LLVM_CONFIG=/usr/local/Cellar/llvm@9/9.0.1_2/bin/llvm-config pip install llvmlite
-        brew install mariadb
+        brew install llvm@11
         python -m pip install --upgrade pip
+        LLVM_CONFIG=/usr/local/Cellar/llvm@11/11.1.0/bin/llvm-config pip install llvmlite
+        brew install mariadb
         pip install pytest
+        # Can remove after next Mathics-core release
+        python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
     - name: Install pymathics.natlang
       run: |
         pip install -e .
