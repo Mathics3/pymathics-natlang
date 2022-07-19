@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from .helper import session, check_evaluation
 
+
 def test_natlang():
 
     session.evaluate(
         """
         LoadModule["pymathics.natlang"]
         """
-        )
+    )
 
     for str_expr, str_expected, message in (
         (

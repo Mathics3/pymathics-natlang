@@ -389,9 +389,7 @@ class TextSentences(_SpacyBuiltin):
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return ListExpression(
-                itertools.islice(
-                    (String(sent.text) for sent in doc.sents), n.value
-                ),
+                itertools.islice((String(sent.text) for sent in doc.sents), n.value),
             )
 
 
@@ -974,9 +972,7 @@ class WordDefinition(_WordNetBuiltin):
             evaluation, self._language_name(evaluation, options)
         )
         if wordnet:
-            senses = self._senses(
-                word.value.lower(), wordnet, language_code
-            )
+            senses = self._senses(word.value.lower(), wordnet, language_code)
             if senses:
                 return ListExpression([String(syn.definition()) for syn, _ in senses])
             else:
@@ -1284,9 +1280,7 @@ class DictionaryWordQ(_WordNetBuiltin):
             evaluation, self._language_name(evaluation, options)
         )
         if wordnet:
-            if list(
-                wordnet.synsets(word.value.lower(), None, language_code)
-            ):
+            if list(wordnet.synsets(word.value.lower(), None, language_code)):
                 return SymbolTrue
             else:
                 return SymbolFalse
@@ -1512,9 +1506,7 @@ class SpellingCorrectionList(Builtin):
         language_name = self.get_option(options, "Language", evaluation)
         if not isinstance(language_name, String):
             return
-        language_code = SpellingCorrectionList._languages.get(
-            language_name.value, None
-        )
+        language_code = SpellingCorrectionList._languages.get(language_name.value, None)
         if not language_code:
             return evaluation.message("SpellingCorrectionList", "lang", language_name)
 
