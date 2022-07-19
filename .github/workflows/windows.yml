@@ -1,4 +1,4 @@
-name: pymathics-natlang (macOS)
+name: pymathics-natlang (Windows)
 
 on:
   push:
@@ -8,14 +8,11 @@ on:
 
 jobs:
   build:
-    env:
-      LDFLAGS: "-L/usr/local/opt/llvm@11/lib"
-      CPPFLAGS: "-I/usr/local/opt/llvm@11/include"
-    runs-on: macos-latest
+    runs-on: windows-latest
     strategy:
       matrix:
-        os: [macOS]
-        python-version: [3.6, 3.7, 3.8, 3.9]
+        os: [windows]
+        python-version: [ 3.8, 3.9]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -24,10 +21,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        brew install llvm@11
         python -m pip install --upgrade pip
-        LLVM_CONFIG=/usr/local/Cellar/llvm@11/11.1.0/bin/llvm-config pip install llvmlite
-        brew install mariadb
+        python -m pip install wheel
+        choco install llvm mariadb mysql-connector
         pip install pytest
         # Can remove after next Mathics-core release
         python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]

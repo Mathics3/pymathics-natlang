@@ -1,4 +1,4 @@
-name: Mathics (ubuntu)
+name: pymathics-natlang (ubuntu)
 
 on:
   push:
@@ -8,10 +8,13 @@ on:
 
 jobs:
   build:
+    env:
+      LDFLAGS: "-L/usr/local/opt/llvm@11/lib"
+      CPPFLAGS: "-I/usr/local/opt/llvm@11/include"
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.6, 3.7, 3.8]
+        python-version: [3.6, 3.7, 3.8, 3.9]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Python ${{ matrix.python-version }}
@@ -23,6 +26,8 @@ jobs:
         sudo apt-get update -qq && sudo apt-get install -qq liblapack-dev llvm-dev maria libmysqlclient-dev
         python -m pip install --upgrade pip
         pip install pytest
+        # Can remove after next Mathics-core release
+        python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
     - name: Install pymathics.natlang
       run: |
         pip install -e .
