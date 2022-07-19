@@ -54,8 +54,16 @@ from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import Integer, Real, String
 from mathics.core.convert.expression import ListExpression, to_mathics_list
 from mathics.core.expression import Expression
-from mathics.core.symbols import Symbol, SymbolList, SymbolTrue, strip_context
-from mathics.core.systemsymbols import SymbolN
+from mathics.core.symbols import (
+    Symbol,
+    SymbolFalse,
+    SymbolTrue,
+    strip_context,
+)
+from mathics.core.systemsymbols import SymbolMissing, SymbolN, SymbolRule
+
+
+SymbolDictionaryLookup = Symbol("DictionaryLookup")
 
 
 def _parse_nltk_lookup_error(e):
@@ -232,9 +240,7 @@ class _SpacyBuiltin(Builtin):
         if language_name is None:
             language_name = String("Undefined")
         if isinstance(language_name, String):
-            language_code = _SpacyBuiltin._language_codes.get(
-                language_name.value
-            )
+            language_code = _SpacyBuiltin._language_codes.get(language_name.value)
         if not language_code:
             evaluation.message(
                 self.get_name(), "lang", language_name, strip_context(self.get_name())
@@ -341,13 +347,13 @@ class TextWords(_SpacyBuiltin):
 
     def apply_n(self, text, n, evaluation, options):
         "TextWords[text_String, n_Integer, OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
             return ListExpression(
                 *itertools.islice(
                     (String(word.text) for word in doc if word.pos != punctuation),
-                    n.get_int_value(),
+                    n.value,
                 ),
             )
 
@@ -374,19 +380,17 @@ class TextSentences(_SpacyBuiltin):
 
     def apply(self, text, evaluation, options):
         "TextSentences[text_String, OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
-            return ListExpression(
-                *[String(sent.text) for sent in doc.sents]
-            )
+            return ListExpression(*[String(sent.text) for sent in doc.sents])
 
     def apply_n(self, text, n, evaluation, options):
         "TextSentences[text_String, n_Integer, OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
             return ListExpression(
                 itertools.islice(
-                    (String(sent.text) for sent in doc.sents), n.get_int_value()
+                    (String(sent.text) for sent in doc.sents), n.value
                 ),
             )
 
@@ -481,9 +485,7 @@ class WordFrequency(_SpacyBuiltin):
                 text = text.lower()
             if text in words:
                 n += 1
-        return Expression(
-            SymbolN, Integer(n) / Integer(len(doc))
-        )
+        return Expression(SymbolN, Integer(n) / Integer(len(doc)))
 
 
 class Containing(Builtin):
@@ -492,11 +494,11 @@ class Containing(Builtin):
 
 def _cases(doc, form):
     if isinstance(form, String):
-        generators = [_forms.get(form.get_string_value())]
+        generators = [_forms.get(form.value)]
     elif form.get_head_name() == "System`Alternatives":
         if not all(isinstance(f, String) for f in form.elements):
             return  # error
-        generators = [_forms.get(f.get_string_value()) for f in form.elements]
+        generators = [_forms.get(f.value) for f in form.elements]
     elif form.get_head_name() == "PyMathics`Containing":
         if len(form.elements) == 2:
             for t in _containing(doc, *form.elements):
@@ -530,7 +532,7 @@ def _cases(doc, form):
 def _containing(doc, outer, inner):
     if not isinstance(outer, String):
         return  # error
-    outer_generator = _forms.get(outer.get_string_value())
+    outer_generator = _forms.get(outer.value)
     inner_iter = _cases(doc, inner)
     inner_start = None
     produce_t = False
@@ -580,9 +582,7 @@ class TextCases(_SpacyBuiltin):
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(
-                *itertools.islice(
-                    (t.text for t in _cases(doc, form)), n.value
-                )
+                *itertools.islice((t.text for t in _cases(doc, form)), n.value)
             )
 
 
@@ -605,13 +605,10 @@ class TextPosition(_SpacyBuiltin):
 
     def apply_n(self, text, form, n, evaluation, options):
         "TextPosition[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
-            return Expression(
-                "List",
-                *itertools.islice(
-                    (_position(t) for t in _cases(doc, form)), n.get_int_value()
-                )
+            return to_mathics_list(
+                *itertools.islice((_position(t) for t in _cases(doc, form)), n.value)
             )
 
 
@@ -666,11 +663,11 @@ class TextStructure(_SpacyBuiltin):
 
     def apply(self, text, evaluation, options):
         'TextStructure[text_String, "ConstituentString",  OptionsPattern[%(name)s]]'
-        doc = self._nlp(text.get_string_value(), evaluation, options)
+        doc = self._nlp(text.value, evaluation, options)
         if doc:
             tree = self._to_tree(list(doc))
             sents = ["(Sentence, (%s))" % self._to_constituent_string(x) for x in tree]
-            return to_mathics_list(*sents, elements_conversion_fn = String)
+            return to_mathics_list(*sents, elements_conversion_fn=String)
 
 
 class WordSimilarity(_SpacyBuiltin):
@@ -706,20 +703,20 @@ class WordSimilarity(_SpacyBuiltin):
 
     def apply(self, text1, text2, evaluation, options):
         "WordSimilarity[text1_String, text2_String, OptionsPattern[%(name)s]]"
-        doc1 = self._nlp(text1.get_string_value(), evaluation, options)
+        doc1 = self._nlp(text1.value, evaluation, options)
         if doc1:
-            doc2 = self._nlp(text2.get_string_value(), evaluation, options)
+            doc2 = self._nlp(text2.value, evaluation, options)
             if doc2:
                 return Real(doc1.similarity(doc2))
 
     def apply_pair(self, text1, i1, text2, i2, evaluation, options):
         "WordSimilarity[{text1_String, i1_}, {text2_String, i2_}, OptionsPattern[%(name)s]]"
-        doc1 = self._nlp(text1.get_string_value(), evaluation, options)
+        doc1 = self._nlp(text1.value, evaluation, options)
         if doc1:
-            if text2.get_string_value() == text1.get_string_value():
+            if text2.value == text1.value:
                 doc2 = doc1
             else:
-                doc2 = self._nlp(text2.get_string_value(), evaluation, options)
+                doc2 = self._nlp(text2.value, evaluation, options)
             if doc2:
                 if (
                     i1.get_head_name() == "System`List"
@@ -734,12 +731,12 @@ class WordSimilarity(_SpacyBuiltin):
                     ):
                         evaluation.message("TextSimilarity", "idxfmt")
                         return
-                    indices1 = [i.get_int_value() for i in i1.elements]
-                    indices2 = [i.get_int_value() for i in i2.elements]
+                    indices1 = [i.value for i in i1.elements]
+                    indices2 = [i.value for i in i2.elements]
                     multiple = True
                 elif isinstance(i1, Integer) and isinstance(i2, Integer):
-                    indices1 = [i1.get_int_value()]
-                    indices2 = [i2.get_int_value()]
+                    indices1 = [i1.value]
+                    indices2 = [i2.value]
                     multiple = False
                 else:
                     evaluation.message("TextSimilarity", "idxfmt")
@@ -759,7 +756,7 @@ class WordSimilarity(_SpacyBuiltin):
                 ]
 
                 if multiple:
-                    return Expression("List", *result)
+                    return ListExpression(*result)
                 else:
                     return result[0]
 
@@ -798,15 +795,14 @@ class WordStem(Builtin):
     def apply(self, word, evaluation):
         "WordStem[word_String]"
         stemmer = self._get_porter_stemmer()
-        return String(stemmer.stem(word.get_string_value()))
+        return String(stemmer.stem(word.value))
 
     def apply_list(self, words, evaluation):
         "WordStem[words_List]"
         if all(isinstance(w, String) for w in words.elements):
             stemmer = self._get_porter_stemmer()
-            return Expression(
-                "List",
-                *[String(stemmer.stem(w.get_string_value())) for w in words.elements]
+            return ListExpression(
+                *[String(stemmer.stem(w.value)) for w in words.elements]
             )
 
 
@@ -861,7 +857,7 @@ class _WordNetBuiltin(Builtin):
     def _load_wordnet(self, evaluation, language_name):
         language_code = None
         if isinstance(language_name, String):
-            language_code = iso639_3.get(language_name.get_string_value())
+            language_code = iso639_3.get(language_name.value)
         if not language_code:
             evaluation.message(
                 self.get_name(), "lang", language_name, strip_context(self.get_name())
@@ -979,14 +975,12 @@ class WordDefinition(_WordNetBuiltin):
         )
         if wordnet:
             senses = self._senses(
-                word.get_string_value().lower(), wordnet, language_code
+                word.value.lower(), wordnet, language_code
             )
             if senses:
-                return Expression(
-                    "List", *[String(syn.definition()) for syn, _ in senses]
-                )
+                return ListExpression([String(syn.definition()) for syn, _ in senses])
             else:
-                return Expression("Missing", "NotAvailable")
+                return Expression(SymbolMissing, "NotAvailable")
 
 
 class WordProperty:
@@ -1149,27 +1143,27 @@ class WordData(_WordListBuiltin):
 
     def _parse_word(self, word):
         if isinstance(word, String):
-            return word.get_string_value().lower()
+            return word.value.lower()
         elif word.get_head_name() == "System`List":
             if len(word.elements) == 3 and all(
                 isinstance(s, String) for s in word.elements
             ):
-                return tuple(s.get_string_value() for s in word.elements)
+                return tuple(s.value for s in word.elements)
 
     def _standard_property(
         self, py_word, py_form, py_property, wordnet, language_code, evaluation
     ):
         senses = self._senses(py_word, wordnet, language_code)
         if not senses:
-            return Expression("Missing", "NotAvailable")
+            return Expression(SymbolMissing, "NotAvailable")
         elif py_form == "List":
             word_property = WordProperty(self._short_syn_form, wordnet, language_code)
             property_getter = getattr(
                 word_property, "%s" % self._underscore(py_property), None
             )
             if property_getter:
-                return Expression(
-                    "List", *[property_getter(syn, desc) for syn, desc in senses]
+                return ListExpression(
+                    *[property_getter(syn, desc) for syn, desc in senses]
                 )
         elif py_form in ("Rules", "ShortRules"):
             syn_form = (lambda s: s) if py_form == "Rules" else (lambda s: s[0])
@@ -1178,10 +1172,9 @@ class WordData(_WordListBuiltin):
                 word_property, "%s" % self._underscore(py_property), None
             )
             if property_getter:
-                return Expression(
-                    "List",
+                return ListExpression(
                     *[
-                        Expression("Rule", desc, property_getter(syn, desc))
+                        Expression(SymbolRule, desc, property_getter(syn, desc))
                         for syn, desc in senses
                     ]
                 )
@@ -1192,17 +1185,16 @@ class WordData(_WordListBuiltin):
             syn.pos() for syn, _ in self._senses(py_word, wordnet, language_code)
         )
         if not parts:
-            return Expression("Missing", "NotAvailable")
+            return Expression(SymbolMissing, "NotAvailable")
         else:
-            return Expression(
-                "List",
+            return ListExpression(
                 *[String(s) for s in sorted([_wordnet_pos_to_type[p] for p in parts])]
             )
 
     def _property(self, word, py_property, py_form, evaluation, options):
         if py_property == "PorterStem":
             if isinstance(word, String):
-                return String(WordStem.porter(word.get_string_value()))
+                return String(WordStem.porter(word.value))
             else:
                 return
 
@@ -1229,7 +1221,7 @@ class WordData(_WordListBuiltin):
     def apply(self, word, evaluation, options):
         "WordData[word_, OptionsPattern[%(name)s]]"
         if word.get_head_name() == "System`StringExpression":
-            return Expression("DictionaryLookup", word)
+            return Expression(SymbolDictionaryLookup, word)
         elif isinstance(word, String) or word.get_head_name() == "System`List":
             pass
         else:
@@ -1246,13 +1238,13 @@ class WordData(_WordListBuiltin):
             return
 
         senses = self._senses(py_word, wordnet, language_code)
-        return Expression("List", *[[String(s) for s in desc] for syn, desc in senses])
+        return ListExpression(*[[String(s) for s in desc] for syn, desc in senses])
 
     def apply_property(self, word, property, evaluation, options):
         "WordData[word_, property_String, OptionsPattern[%(name)s]]"
         if word.get_head_name() == "System`StringExpression":
             if property.get_string_value() == "Lookup":
-                return Expression("DictionaryLookup", word)
+                return Expression(SymbolDictionaryLookup, word)
         elif isinstance(word, String) or word.get_head_name() == "System`List":
             return self._property(
                 word, property.get_string_value(), "ShortRules", evaluation, options
@@ -1263,8 +1255,8 @@ class WordData(_WordListBuiltin):
         if isinstance(word, String) or word.get_head_name() == "System`List":
             return self._property(
                 word,
-                property.get_string_value(),
-                form.get_string_value(),
+                property.value,
+                form.value,
                 evaluation,
                 options,
             )
@@ -1285,7 +1277,7 @@ class DictionaryWordQ(_WordNetBuiltin):
     """
 
     def apply(self, word, evaluation, options):
-        "DictionaryWordQ[word_,  OptionsPattern[%(name)s]]"
+        "DictionaryWordQ[word_String,  OptionsPattern[%(name)s]]"
         if not isinstance(word, String):
             return False
         wordnet, language_code = self._load_wordnet(
@@ -1293,11 +1285,11 @@ class DictionaryWordQ(_WordNetBuiltin):
         )
         if wordnet:
             if list(
-                wordnet.synsets(word.get_string_value().lower(), None, language_code)
+                wordnet.synsets(word.value.lower(), None, language_code)
             ):
-                return Symbol("System`True")
+                return SymbolTrue
             else:
-                return Symbol("System`False")
+                return SymbolFalse
 
 
 class DictionaryLookup(_WordListBuiltin):
@@ -1341,7 +1333,7 @@ class DictionaryLookup(_WordListBuiltin):
                 matches = self.search(dictionary_words, pattern)
                 if n is not None:
                     matches = itertools.islice(matches, 0, n)
-                return Expression("List", *(String(match) for match in sorted(matches)))
+                return ListExpression(*(String(match) for match in sorted(matches)))
 
     def apply_english(self, word, evaluation):
         "DictionaryLookup[word_]"
@@ -1353,11 +1345,11 @@ class DictionaryLookup(_WordListBuiltin):
 
     def apply_english_n(self, word, n, evaluation):
         "DictionaryLookup[word_, n_Integer]"
-        return self.lookup(String("English"), word, n.get_int_value(), evaluation)
+        return self.lookup(String("English"), word, n.value, evaluation)
 
     def apply_language_n(self, language, word, n, evaluation):
         "DictionaryLookup[{language_String, word_}, n_Integer]"
-        return self.lookup(language, word, n.get_int_value(), evaluation)
+        return self.lookup(language, word, n.value, evaluation)
 
 
 class WordList(_WordListBuiltin):
@@ -1378,17 +1370,17 @@ class WordList(_WordListBuiltin):
         "WordList[OptionsPattern[%(name)s]]"
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
         if words:
-            return Expression("List", *[String(w) for w in words])
+            return to_mathics_list(*words, elements_conversion_fn=String)
 
     def apply_type(self, wordtype, evaluation, options):
         "WordList[wordtype_String, OptionsPattern[%(name)s]]"
         words = self._words(
             self._language_name(evaluation, options),
-            wordtype.get_string_value(),
+            wordtype.value,
             evaluation,
         )
         if words:
-            return Expression("List", *[String(w) for w in words])
+            return to_mathics_list(*words, elements_conversion_fn=String)
 
 
 class RandomWord(_WordListBuiltin):
@@ -1421,17 +1413,15 @@ class RandomWord(_WordListBuiltin):
 
     def apply_type(self, type, evaluation, options):
         "RandomWord[type_String, OptionsPattern[%(name)s]]"
-        words = self._random_words(type.get_string_value(), 1, evaluation, options)
+        words = self._random_words(type.value, 1, evaluation, options)
         if words:
             return words[0]
 
     def apply_type_n(self, type, n, evaluation, options):
         "RandomWord[type_String, n_Integer, OptionsPattern[%(name)s]]"
-        words = self._random_words(
-            type.get_string_value(), n.get_int_value(), evaluation, options
-        )
+        words = self._random_words(type.value, n.value, evaluation, options)
         if words:
-            return Expression("List", *words)
+            return ListExpression(*words)
 
 
 class LanguageIdentify(Builtin):
@@ -1453,10 +1443,11 @@ class LanguageIdentify(Builtin):
     def apply(self, text, evaluation):
         "LanguageIdentify[text_String]"
         import langid  # see https://github.com/saffsd/langid.py
+
         # an alternative: https://github.com/Mimino666/langdetect
         import pycountry
 
-        code, _ = langid.classify(text.get_string_value())
+        code, _ = langid.classify(text.value)
         language = pycountry.languages.get(alpha_2=code)
         if language is None:
             return Symbol("$Failed")
@@ -1480,7 +1471,7 @@ class Pluralize(Builtin):
         "Pluralize[word_String]"
         from pattern.en import pluralize
 
-        return String(pluralize(word.get_string_value()))
+        return String(pluralize(word.value))
 
 
 class SpellingCorrectionList(Builtin):
@@ -1522,7 +1513,7 @@ class SpellingCorrectionList(Builtin):
         if not isinstance(language_name, String):
             return
         language_code = SpellingCorrectionList._languages.get(
-            language_name.get_string_value(), None
+            language_name.value, None
         )
         if not language_code:
             return evaluation.message("SpellingCorrectionList", "lang", language_name)
@@ -1532,9 +1523,9 @@ class SpellingCorrectionList(Builtin):
             d = enchant.Dict(language_code)
             SpellingCorrectionList._dictionaries[language_code] = d
 
-        py_word = word.get_string_value()
+        py_word = word.value
 
         if d.check(py_word):
-            return Expression("List", word)
+            return ListExpression(word)
         else:
-            return Expression("List", *[String(s) for s in d.suggest(py_word)])
+            return to_mathics_list(*d.suggest(py_word), elements_conversion_fn=String)
