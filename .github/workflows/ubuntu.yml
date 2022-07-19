@@ -1,4 +1,4 @@
-name: Mathics (ubuntu)
+name: pymathics-natlang (ubuntu)
 
 on:
   push:
@@ -8,6 +8,9 @@ on:
 
 jobs:
   build:
+    env:
+      LDFLAGS: "-L/usr/local/opt/llvm@11/lib"
+      CPPFLAGS: "-I/usr/local/opt/llvm@11/include"
     runs-on: ubuntu-latest
     strategy:
       matrix:
