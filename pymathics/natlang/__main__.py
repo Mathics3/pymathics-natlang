@@ -256,7 +256,7 @@ class _SpacyBuiltin(Builtin):
             if "SPACY_DATA" in os.environ:
                 instance = spacy.load(language_code, via=os.environ["SPACY_DATA"])
             else:
-                instance = spacy.load(f"{language_code}_core_web_sm")
+                instance = spacy.load(f"{language_code}_core_web_md")
 
             _SpacyBuiltin._spacy_instances[language_code] = instance
             return instance
@@ -567,7 +567,7 @@ class TextCases(_SpacyBuiltin):
      = {London}
 
     >> TextCases[Import["ExampleData/EinsteinSzilLetter.txt"], "Person", 3][[2;;3]]
-     = {E. Fermi, L. Szilard}
+     = {L. Szilard, Joliot}
     """
 
     def apply_string_form(self, text, form, evaluation, options):
@@ -683,13 +683,13 @@ class WordSimilarity(_SpacyBuiltin):
     </dl>
 
     >> NumberForm[WordSimilarity["car", "train"], 3]
-     = 0.731
+     = 0.439
 
     >> NumberForm[WordSimilarity["car", "hedgehog"], 3]
-     = 0.302
+     = 0.195
 
     >> NumberForm[WordSimilarity[{"An ocean full of water.", {2, 2}}, { "A desert full of sand.", {2, 5}}], 3]
-     = {0.731, 0.317}
+     = {0.505, 0.481}
     """
 
     messages = _merge_dictionaries(

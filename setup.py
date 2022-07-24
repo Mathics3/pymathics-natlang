@@ -25,6 +25,8 @@ def read(*rnames):
 # Get/set VERSION and long_description from files
 long_description = read("README.rst") + "\n"
 
+__version__ = "0.0.0"  # overwritten by exec below
+
 # stores __version__ in the current namespace
 exec(compile(open("pymathics/natlang/version.py").read(), "version.py", "exec"))
 
@@ -34,7 +36,7 @@ is_PyPy = platform.python_implementation() == "PyPy"
 # Environment variables "lang", "WORDLIST_SIZE", and "SPACY_DOWNLOAD" override defaults.
 
 # Full package name with two-letter language code, e.g. fr, zh
-lang = os.environ.get("lang", "en_core_web_sm")
+lang = os.environ.get("lang", "en_core_web_md")
 
 # Size of wordlist used
 # sm=small, lg=large, md=medium.
