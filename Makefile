@@ -30,7 +30,7 @@ all: develop
 
 #: Word-list data. Customize with lang and eventually WORDLIST_SIZE variables
 wordlist:
-	$(PYTHON) -m nltk.downloader wordnet omw
+	$(PYTHON) -m nltk.downloader wordnet omw-1.4
 	$(PYTHON) -m spacy download $(SPACY_DOWNLOAD)
 
 #: build everything needed to install
