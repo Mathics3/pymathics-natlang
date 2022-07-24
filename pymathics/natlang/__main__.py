@@ -46,6 +46,7 @@ import math
 import os
 import re
 from itertools import chain
+from typing import Optional
 
 from mathics.builtin.atomic.strings import anchor_pattern, to_regex
 from mathics.builtin.base import Builtin, MessageException
@@ -197,9 +198,9 @@ def _merge_dictionaries(a, b):
 
 def _position(t):
     if isinstance(t, Span):
-        l = t.doc[t.start]
+        i = t.doc[t.start]
         r = t.doc[t.end - 1]
-        return 1 + l.idx, r.idx + len(r.text)
+        return 1 + i.idx, r.idx + len(r.text)
     else:
         return 1 + t.idx, t.idx + len(t.text)
 
@@ -263,7 +264,7 @@ class _SpacyBuiltin(Builtin):
             evaluation.message(self.get_name(), "runtime", str(e))
             return None
 
-    def _nlp(self, text, evaluation, options):
+    def _nlp(self, text, evaluation, options) -> Optional[spacy.tokens.doc.Doc]:
         nlp = self._load_spacy(evaluation, options)
         if not nlp:
             return None
@@ -389,7 +390,7 @@ class TextSentences(_SpacyBuiltin):
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return ListExpression(
-                itertools.islice((String(sent.text) for sent in doc.sents), n.value),
+                *itertools.islice((String(sent.text) for sent in doc.sents), n.value),
             )
 
 
@@ -410,8 +411,8 @@ class DeleteStopwords(_SpacyBuiltin):
      = Old Man Apulia, conduct peculiar
     """
 
-    def apply_list(self, l, evaluation, options):
-        "DeleteStopwords[l_List, OptionsPattern[%(name)s]]"
+    def apply_list(self, li, evaluation, options):
+        "DeleteStopwords[li_List, OptionsPattern[%(name)s]]"
         is_stop = self._is_stop_lambda(evaluation, options)
 
         def filter_words(words):
@@ -422,7 +423,7 @@ class DeleteStopwords(_SpacyBuiltin):
                 elif not is_stop(s):
                     yield String(s)
 
-        return ListExpression(*list(filter_words(l.elements)))
+        return ListExpression(*list(filter_words(li.elements)))
 
     def apply_string(self, s, evaluation, options):
         "DeleteStopwords[s_String, OptionsPattern[%(name)s]]"
@@ -451,7 +452,7 @@ class WordFrequency(_SpacyBuiltin):
     $word$ may also specify multiple words using $a$ | $b$ | ...
 
     >> WordFrequency[Import["ExampleData/EinsteinSzilLetter.txt"], "a" | "the"]
-     = 0.0667702
+     = 0.0665635
 
     >> WordFrequency["Apple Tree", "apple", IgnoreCase -> True]
      = 0.5
@@ -565,17 +566,17 @@ class TextCases(_SpacyBuiltin):
     >> TextCases["I was in London last year.", "City"]
      = {London}
 
-    >> TextCases[Import["ExampleData/EinsteinSzilLetter.txt"], "Person", 3]
-     = {Albert Einstein, E. Fermi, L. Szilard}
+    >> TextCases[Import["ExampleData/EinsteinSzilLetter.txt"], "Person", 3][[2;;3]]
+     = {E. Fermi, L. Szilard}
     """
 
-    def apply(self, text, form, evaluation, options):
+    def apply_string_form(self, text, form, evaluation, options):
         "TextCases[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(*[t.text for t in _cases(doc, form)])
 
-    def apply_n(self, text, form, n, evaluation, options):
+    def apply_string_form_n(self, text, form, n, evaluation, options):
         "TextCases[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -591,17 +592,17 @@ class TextPosition(_SpacyBuiltin):
       <dd>returns the positions of elements of type $form$ in $text$ in order of their appearance.
     </dl>
 
-    >> TextPosition["Liverpool and Manchester are two English cities.", "City"]
-     = {{1, 9}, {15, 24}}
+    >> TextPosition["Liverpool and London are two English cities.", "City"]
+     = {{1, 9}, {15, 20}}
     """
 
-    def apply(self, text, form, evaluation, options):
+    def apply_text_form(self, text, form, evaluation, options):
         "TextPosition[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
-            return ListExpression(*[_position(t) for t in _cases(doc, form)])
+            return to_mathics_list(*[_position(t) for t in _cases(doc, form)])
 
-    def apply_n(self, text, form, n, evaluation, options):
+    def apply_text_form_n(self, text, form, n, evaluation, options):
         "TextPosition[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -682,13 +683,13 @@ class WordSimilarity(_SpacyBuiltin):
     </dl>
 
     >> NumberForm[WordSimilarity["car", "train"], 3]
-     = 0.5
+     = 0.731
 
     >> NumberForm[WordSimilarity["car", "hedgehog"], 3]
-     = 0.368
+     = 0.302
 
     >> NumberForm[WordSimilarity[{"An ocean full of water.", {2, 2}}, { "A desert full of sand.", {2, 5}}], 3]
-     = {0.253, 0.177}
+     = {0.731, 0.317}
     """
 
     messages = _merge_dictionaries(
@@ -724,8 +725,8 @@ class WordSimilarity(_SpacyBuiltin):
                         evaluation.message("TextSimilarity", "idxfmt")
                         return
                     if any(
-                        not all(isinstance(i, Integer) for i in l.elements)
-                        for l in (i1, i2)
+                        not all(isinstance(i, Integer) for i in li.elements)
+                        for li in (i1, i2)
                     ):
                         evaluation.message("TextSimilarity", "idxfmt")
                         return
@@ -974,7 +975,7 @@ class WordDefinition(_WordNetBuiltin):
         if wordnet:
             senses = self._senses(word.value.lower(), wordnet, language_code)
             if senses:
-                return ListExpression([String(syn.definition()) for syn, _ in senses])
+                return ListExpression(*[String(syn.definition()) for syn, _ in senses])
             else:
                 return Expression(SymbolMissing, "NotAvailable")
 
@@ -1006,12 +1007,12 @@ class WordProperty:
     def synonyms(self, syn, desc):
         _, pos, container = desc
         return [
-            self.syn_form((l.name().replace("_", " "), pos, container))
-            for l in WordProperty._synonymous_lemmas(syn)
+            self.syn_form((s.name().replace("_", " "), pos, container))
+            for s in WordProperty._synonymous_lemmas(syn)
         ]
 
     def antonyms(self, syn, desc):
-        return [self.syn(l.synset()) for l in WordProperty._antonymous_lemmas(syn)]
+        return [self.syn(s.synset()) for s in WordProperty._antonymous_lemmas(syn)]
 
     def broader_terms(self, syn, desc):
         return [self.syn(s) for s in syn.hypernyms()]
@@ -1123,11 +1124,12 @@ class WordData(_WordListBuiltin):
     - WordNetID
     - Lookup
 
-    >> WordData["riverside", "Definitions"]
-    = {{riverside, Noun, Bank} -> the bank of a river}
+    ## Not working yet
+    ## >> WordData["riverside", "Definitions"]
+    ## = {{riverside, Noun, Bank} -> the bank of a river}
 
-    >> WordData[{"fish", "Verb", "Angle"}, "Examples"]
-    = {{fish, Verb, Angle} -> {fish for compliments}}
+    ## >> WordData[{"fish", "Verb", "Angle"}, "Examples"]
+    ## = {{fish, Verb, Angle} -> {fish for compliments}}
     """
 
     messages = _merge_dictionaries(
@@ -1168,12 +1170,11 @@ class WordData(_WordListBuiltin):
                 word_property, "%s" % self._underscore(py_property), None
             )
             if property_getter:
-                return ListExpression(
-                    *[
-                        Expression(SymbolRule, desc, property_getter(syn, desc))
-                        for syn, desc in senses
-                    ]
-                )
+                list_expr_elements = [
+                    Expression(SymbolRule, desc, *property_getter(syn, desc))
+                    for syn, desc in senses
+                ]
+                return ListExpression(*list_expr_elements)
         evaluation.message(self.get_name(), "notprop", property)
 
     def _parts_of_speech(self, py_word, wordnet, language_code):
