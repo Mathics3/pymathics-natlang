@@ -64,7 +64,7 @@ from mathics.core.symbols import (
 from mathics.core.systemsymbols import SymbolMissing, SymbolN, SymbolRule
 
 
-SymbolDictionaryLookup = Symbol("DictionaryLookup")
+SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
 
 
 def _parse_nltk_lookup_error(e):
