@@ -12,7 +12,7 @@ jobs:
     strategy:
       matrix:
         os: [windows]
-        python-version: [ 3.8, 3.9]
+        python-version: [ 3.9, 3.10]
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
@@ -26,8 +26,8 @@ jobs:
         choco install llvm mariadb mysql-connector
         pip install pytest
         # Can remove after next Mathics-core release
-        # python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
-        python -m pip install Mathics3[full]
+        python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
+        # python -m pip install Mathics3[full]
     - name: Install pymathics.natlang
       run: |
         pip install -e .

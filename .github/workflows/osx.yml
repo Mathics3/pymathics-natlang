@@ -30,8 +30,8 @@ jobs:
         brew install mariadb
         pip install pytest
         # Can remove after next Mathics-core release
-        #python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
-        python -m pip install Mathics3[full]
+        python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
+        # python -m pip install Mathics3[full]
     - name: Install pymathics.natlang
       run: |
         pip install -e .
