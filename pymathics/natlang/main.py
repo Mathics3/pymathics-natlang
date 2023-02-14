@@ -1,44 +1,41 @@
 # -*- coding: utf-8 -*-
+# FIXME: split this up into smaller pieces
+
+"""Natural language functions.
+
+The following Python Packages are used:
+
+* ``spacy`` is used for parsing natural languages
+* ``nltk`` is used for functions using WordNet-related builtins
+* `langid``, and ``pycountry`` are used for ``LanguageIdentify[]``
+* ``pyenchant`` is used for SpellingCorrectionList[]
+
+User customization:
+
+For nltk, use the environment variable NLTK_DATA to specify a custom
+data path (instead of $HOME/.nltk).  For spacy, eset  MATHICS3_SPACY_DATA,
+a Mathics3-specific variable.
+
+In order to use the Extended Open Multilingual Wordnet (OMW) with NLTK
+and use even more languages, you need to install them manually.
+
+Go to http://compling.hss.ntu.edu.sg/omw/summx.html, download the
+data, and then create a new folder under
+$HOME/nltk_data/corpora/omw/your_language where you put the file from
+wiki/wn-wikt-your_language.tab, and rename it to
+wn-data-your_language.tab.
+
+Adding more languages to Open Multilingual Wordnet:
+
+In order to use the Extended Open Multilingual Wordnet with NLTK and
+use even more languages, you need to install them manually. Go to
+http://compling.hss.ntu.edu.sg/omw/summx.html, download the data, and
+then create a new folder under
+$HOME/nltk_data/corpora/omw/your_language where you put the file from
+wiki/wn-wikt-your_language.tab, and rename it to
+wn-data-your_language.tab.
 
 """
-Natural language functions
-"""
-
-# PYTHON MODULES USED IN HERE
-
-# spacy: everything related to parsing natural language
-# nltk: functions using WordNet
-# pattern: finding inflections (Pluralize[] and WordData[])
-# langid, pycountry: LanguageIdentify[]
-# pyenchant: SpellingCorrectionList[]
-
-# If a module is not installed, all functions will gracefully alert the user to the missing functionality/packages.
-# All modules above (except for "pattern", see below) are available in Python 2 and Python 3 versions.
-
-# ADDING MORE LANGUAGES TO OMW
-
-# In order to use the Extended Open Multilingual Wordnet with NLTK and use even more languages, you need to install
-# them manually. Go to http://compling.hss.ntu.edu.sg/omw/summx.html, download the data, and then create a new folder
-# under $HOME/nltk_data/corpora/omw/your_language where you put the file from wiki/wn-wikt-your_language.tab, and
-# rename it to wn-data-your_language.tab.
-
-# PATTERN MODULE
-
-# This module uses "pattern" for various tasks (http://www.clips.ua.ac.be/pattern). Pattern currently only supports
-# Python 2, but there exists for Python 3 an official, though preliminary version: https://github.com/pattern3/pattern,
-# which is not in pip, but can be installed manually. on OS X make sure to "pip install Pillow lxml" and after
-# installing, uncompress pattern.egg into folder. you may also need to run "export STATIC_DEPS=true" before you run
-# setup.py
-
-# PYENCHANT MODULE
-
-# "pyenchant" OS X python 3 fix: patch enchant/_enchant.py:
-# prefix_dir.contents = c_char_p(e_dir.encode('utf8'))
-
-# PORTABLE INSTALLATION
-
-# for nltk, use the environment variable NLTK_DATA to specify a custom data path (instead of $HOME/.nltk).
-# for spacy, use SPACY_DATA; the latter is a custom Mathics variable.
 
 import heapq
 import itertools
@@ -46,7 +43,7 @@ import math
 import os
 import re
 from itertools import chain
-from typing import Optional
+from typing import Optional, Union
 
 from mathics.builtin.atomic.strings import anchor_pattern, to_regex
 from mathics.builtin.base import Builtin, MessageException
@@ -54,15 +51,10 @@ from mathics.builtin.codetables import iso639_3
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import Integer, Real, String
 from mathics.core.convert.expression import ListExpression, to_mathics_list
+from mathics.core.evaluation import Evaluation
 from mathics.core.expression import Expression
-from mathics.core.symbols import (
-    Symbol,
-    SymbolFalse,
-    SymbolTrue,
-    strip_context,
-)
-from mathics.core.systemsymbols import SymbolMissing, SymbolN, SymbolRule
-
+from mathics.core.symbols import Symbol, SymbolFalse, SymbolTrue, strip_context
+from mathics.core.systemsymbols import SymbolFailed, SymbolMissing, SymbolN, SymbolRule
 
 SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
 
@@ -235,7 +227,7 @@ class _SpacyBuiltin(Builtin):
 
     _spacy_instances = {}
 
-    def _load_spacy(self, evaluation, options):
+    def _load_spacy(self, evaluation: Evaluation, options: dict):
         language_code = None
         language_name = self.get_option(options, "Language", evaluation)
         if language_name is None:
@@ -253,8 +245,10 @@ class _SpacyBuiltin(Builtin):
             return instance
 
         try:
-            if "SPACY_DATA" in os.environ:
-                instance = spacy.load(language_code, via=os.environ["SPACY_DATA"])
+            if "MATHICS3_SPACY_DATA" in os.environ:
+                instance = spacy.load(
+                    language_code, via=os.environ["MATHICS3_SPACY_DATA"]
+                )
             else:
                 instance = spacy.load(f"{language_code}_core_web_md")
 
@@ -270,7 +264,7 @@ class _SpacyBuiltin(Builtin):
             return None
         return nlp(text)
 
-    def _is_stop_lambda(self, evaluation, options):
+    def _is_stop_lambda(self, evaluation: Evaluation, options: dict):
         nlp = self._load_spacy(evaluation, options)
         if not nlp:
             return None
@@ -294,7 +288,7 @@ class WordFrequencyData(_SpacyBuiltin):
     # Mathematica uses the gargantuan Google n-gram corpus, see
     # http://commondatastorage.googleapis.com/books/syntactic-ngrams/index.html
 
-    def apply(self, word, evaluation, options):
+    def eval(self, word: String, evaluation: Evaluation, options: dict) -> Real:
         "WordFrequencyData[word_String,  OptionsPattern[%(name)s]]"
         doc = self._nlp(word.value, evaluation, options)
         frequency = 0.0
@@ -315,7 +309,7 @@ class WordCount(_SpacyBuiltin):
      = 4
     """
 
-    def apply(self, text, evaluation, options):
+    def eval(self, text, evaluation: Evaluation, options: dict):
         "WordCount[text_String, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -337,7 +331,9 @@ class TextWords(_SpacyBuiltin):
      = {Hickory, dickory, dock, The, mouse, ran, up, the, clock}
     """
 
-    def apply(self, text, evaluation, options):
+    def eval(
+        self, text: String, evaluation: Evaluation, options: dict
+    ) -> Optional[ListExpression]:
         "TextWords[text_String, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -346,7 +342,7 @@ class TextWords(_SpacyBuiltin):
                 *[String(word.text) for word in doc if word.pos != punctuation],
             )
 
-    def apply_n(self, text, n, evaluation, options):
+    def eval_n(self, text: String, n: Integer, evaluation: Evaluation, options: dict):
         "TextWords[text_String, n_Integer, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -379,13 +375,13 @@ class TextSentences(_SpacyBuiltin):
      = {Mr. Jones met Mrs. Jones.}
     """
 
-    def apply(self, text, evaluation, options):
+    def eval(self, text: String, evaluation: Evaluation, options: dict):
         "TextSentences[text_String, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return ListExpression(*[String(sent.text) for sent in doc.sents])
 
-    def apply_n(self, text, n, evaluation, options):
+    def eval_n(self, text: String, n: Integer, evaluation: Evaluation, options: dict):
         "TextSentences[text_String, n_Integer, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -411,7 +407,7 @@ class DeleteStopwords(_SpacyBuiltin):
      = Old Man Apulia, conduct peculiar
     """
 
-    def apply_list(self, li, evaluation, options):
+    def eval_list(self, li, evaluation: Evaluation, options: dict) -> ListExpression:
         "DeleteStopwords[li_List, OptionsPattern[%(name)s]]"
         is_stop = self._is_stop_lambda(evaluation, options)
 
@@ -425,7 +421,7 @@ class DeleteStopwords(_SpacyBuiltin):
 
         return ListExpression(*list(filter_words(li.elements)))
 
-    def apply_string(self, s, evaluation, options):
+    def eval_string(self, s: String, evaluation: Evaluation, options: dict):
         "DeleteStopwords[s_String, OptionsPattern[%(name)s]]"
         doc = self._nlp(s.value, evaluation, options)
         if doc:
@@ -461,7 +457,7 @@ class WordFrequency(_SpacyBuiltin):
     options = _SpacyBuiltin.options
     options.update({"IgnoreCase": "False"})
 
-    def apply(self, text, word, evaluation, options):
+    def eval(self, text: String, word, evaluation: Evaluation, options: dict):
         "WordFrequency[text_String, word_, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if not doc:
@@ -570,13 +566,17 @@ class TextCases(_SpacyBuiltin):
      = {L. Szilard, Joliot}
     """
 
-    def apply_string_form(self, text, form, evaluation, options):
+    def eval_string_form(
+        self, text: String, form, evaluation: Evaluation, options: dict
+    ):
         "TextCases[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(*[t.text for t in _cases(doc, form)])
 
-    def apply_string_form_n(self, text, form, n, evaluation, options):
+    def eval_string_form_n(
+        self, text: String, form, n: Integer, evaluation: Evaluation, options: dict
+    ):
         "TextCases[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -596,13 +596,15 @@ class TextPosition(_SpacyBuiltin):
      = {{1, 9}, {15, 20}}
     """
 
-    def apply_text_form(self, text, form, evaluation, options):
+    def eval_text_form(self, text: String, form, evaluation: Evaluation, options: dict):
         "TextPosition[text_String, form_,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(*[_position(t) for t in _cases(doc, form)])
 
-    def apply_text_form_n(self, text, form, n, evaluation, options):
+    def eval_text_form_n(
+        self, text: String, form, n: Integer, evaluation: Evaluation, options: dict
+    ):
         "TextPosition[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -660,7 +662,7 @@ class TextStructure(_SpacyBuiltin):
 
         return roots
 
-    def apply(self, text, evaluation, options):
+    def eval(self, text, evaluation: Evaluation, options: dict):
         'TextStructure[text_String, "ConstituentString",  OptionsPattern[%(name)s]]'
         doc = self._nlp(text.value, evaluation, options)
         if doc:
@@ -700,7 +702,9 @@ class WordSimilarity(_SpacyBuiltin):
         },
     )
 
-    def apply(self, text1, text2, evaluation, options):
+    def eval(
+        self, text1: String, text2: String, evaluation: Evaluation, options: dict
+    ) -> Optional[Real]:
         "WordSimilarity[text1_String, text2_String, OptionsPattern[%(name)s]]"
         doc1 = self._nlp(text1.value, evaluation, options)
         if doc1:
@@ -708,7 +712,7 @@ class WordSimilarity(_SpacyBuiltin):
             if doc2:
                 return Real(doc1.similarity(doc2))
 
-    def apply_pair(self, text1, i1, text2, i2, evaluation, options):
+    def eval_pair(self, text1, i1, text2, i2, evaluation: Evaluation, options: dict):
         "WordSimilarity[{text1_String, i1_}, {text2_String, i2_}, OptionsPattern[%(name)s]]"
         doc1 = self._nlp(text1.value, evaluation, options)
         if doc1:
@@ -791,12 +795,12 @@ class WordStem(Builtin):
     def porter(w):
         return WordStem._get_porter_stemmer().stem(w)
 
-    def apply(self, word, evaluation):
+    def eval(self, word: String, evaluation: Evaluation) -> String:
         "WordStem[word_String]"
         stemmer = self._get_porter_stemmer()
         return String(stemmer.stem(word.value))
 
-    def apply_list(self, words, evaluation):
+    def eval_list(self, words, evaluation: Evaluation) -> Optional[ListExpression]:
         "WordStem[words_List]"
         if all(isinstance(w, String) for w in words.elements):
             stemmer = self._get_porter_stemmer()
@@ -821,10 +825,10 @@ class _WordNetBuiltin(Builtin):
 
     _wordnet_instances = {}
 
-    def _language_name(self, evaluation, options):
+    def _language_name(self, evaluation: Evaluation, options: dict):
         return self.get_option(options, "Language", evaluation)
 
-    def _init_wordnet(self, evaluation, language_name, language_code):
+    def _init_wordnet(self, evaluation: Evaluation, language_name, language_code):
         try:
             wordnet_resource = nltk.data.find("corpora/wordnet")
             _init_nltk_maps()
@@ -853,7 +857,7 @@ class _WordNetBuiltin(Builtin):
 
         return wordnet
 
-    def _load_wordnet(self, evaluation, language_name):
+    def _load_wordnet(self, evaluation: Evaluation, language_name) -> tuple:
         language_code = None
         if isinstance(language_name, String):
             language_code = iso639_3.get(language_name.value)
@@ -883,11 +887,11 @@ class _WordNetBuiltin(Builtin):
         return what.replace("_", " "), pos, nr
 
     @staticmethod
-    def _capitalize(s):
+    def _capitalize(s) -> str:
         return re.sub(r"^[a-z]|\s[a-z]", lambda m: m.group(0).upper().lstrip(" "), s)
 
     @staticmethod
-    def _underscore(s):
+    def _underscore(s) -> str:
         return re.sub(
             r"[a-z][A-Z]", lambda m: m.group(0)[0] + "_" + m.group(0)[1].lower(), s
         ).lower()
@@ -911,7 +915,7 @@ class _WordNetBuiltin(Builtin):
         return what, _wordnet_pos_to_type[pos], containers
 
     @staticmethod
-    def syn(syn, wordnet, language_code):
+    def syn(syn, wordnet, language_code) -> tuple:
         what, pos, nr = _WordNetBuiltin._decode_synset(syn)
         for s, form in _WordNetBuiltin._iterate_senses(what, wordnet, language_code):
             if s == syn:
@@ -967,7 +971,7 @@ class WordDefinition(_WordNetBuiltin):
      = {a metric unit of weight equal to one thousandth of a kilogram}
     """
 
-    def apply(self, word, evaluation, options):
+    def eval(self, word, evaluation: Evaluation, options: dict):
         "WordDefinition[word_String, OptionsPattern[%(name)s]]"
         wordnet, language_code = self._load_wordnet(
             evaluation, self._language_name(evaluation, options)
@@ -1188,7 +1192,9 @@ class WordData(_WordListBuiltin):
                 *[String(s) for s in sorted([_wordnet_pos_to_type[p] for p in parts])]
             )
 
-    def _property(self, word, py_property, py_form, evaluation, options):
+    def _property(
+        self, word, py_property, py_form, evaluation: Evaluation, options: dict
+    ):
         if py_property == "PorterStem":
             if isinstance(word, String):
                 return String(WordStem.porter(word.value))
@@ -1215,7 +1221,7 @@ class WordData(_WordListBuiltin):
         except MessageException as e:
             e.message(evaluation)
 
-    def apply(self, word, evaluation, options):
+    def eval(self, word, evaluation: Evaluation, options: dict):
         "WordData[word_, OptionsPattern[%(name)s]]"
         if word.get_head_name() == "System`StringExpression":
             return Expression(SymbolDictionaryLookup, word)
@@ -1237,7 +1243,7 @@ class WordData(_WordListBuiltin):
         senses = self._senses(py_word, wordnet, language_code)
         return ListExpression(*[[String(s) for s in desc] for syn, desc in senses])
 
-    def apply_property(self, word, property, evaluation, options):
+    def eval_property(self, word, property, evaluation: Evaluation, options: dict):
         "WordData[word_, property_String, OptionsPattern[%(name)s]]"
         if word.get_head_name() == "System`StringExpression":
             if property.get_string_value() == "Lookup":
@@ -1247,7 +1253,9 @@ class WordData(_WordListBuiltin):
                 word, property.get_string_value(), "ShortRules", evaluation, options
             )
 
-    def apply_property_form(self, word, property, form, evaluation, options):
+    def eval_property_form(
+        self, word, property, form, evaluation: Evaluation, options: dict
+    ):
         "WordData[word_, property_String, form_String, OptionsPattern[%(name)s]]"
         if isinstance(word, String) or word.get_head_name() == "System`List":
             return self._property(
@@ -1273,7 +1281,7 @@ class DictionaryWordQ(_WordNetBuiltin):
      = False
     """
 
-    def apply(self, word, evaluation, options):
+    def eval(self, word, evaluation: Evaluation, options: dict):
         "DictionaryWordQ[word_String,  OptionsPattern[%(name)s]]"
         if not isinstance(word, String):
             return False
@@ -1330,19 +1338,19 @@ class DictionaryLookup(_WordListBuiltin):
                     matches = itertools.islice(matches, 0, n)
                 return ListExpression(*(String(match) for match in sorted(matches)))
 
-    def apply_english(self, word, evaluation):
+    def eval_english(self, word, evaluation):
         "DictionaryLookup[word_]"
         return self.lookup(String("English"), word, None, evaluation)
 
-    def apply_language(self, language, word, evaluation):
+    def eval_language(self, language, word, evaluation):
         "DictionaryLookup[{language_String, word_}]"
         return self.lookup(language, word, None, evaluation)
 
-    def apply_english_n(self, word, n, evaluation):
+    def eval_english_n(self, word, n, evaluation):
         "DictionaryLookup[word_, n_Integer]"
         return self.lookup(String("English"), word, n.value, evaluation)
 
-    def apply_language_n(self, language, word, n, evaluation):
+    def eval_language_n(self, language, word, n, evaluation):
         "DictionaryLookup[{language_String, word_}, n_Integer]"
         return self.lookup(language, word, n.value, evaluation)
 
@@ -1361,13 +1369,13 @@ class WordList(_WordListBuiltin):
      = 9.3
     """
 
-    def apply(self, evaluation, options):
+    def eval(self, evaluation: Evaluation, options: dict):
         "WordList[OptionsPattern[%(name)s]]"
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
         if words:
             return to_mathics_list(*words, elements_conversion_fn=String)
 
-    def apply_type(self, wordtype, evaluation, options):
+    def eval_type(self, wordtype, evaluation: Evaluation, options: dict):
         "WordList[wordtype_String, OptionsPattern[%(name)s]]"
         words = self._words(
             self._language_name(evaluation, options),
@@ -1392,7 +1400,7 @@ class RandomWord(_WordListBuiltin):
     </dl>
     """
 
-    def _random_words(self, type, n, evaluation, options):
+    def _random_words(self, type, n, evaluation: Evaluation, options: dict):
         words = self._words(self._language_name(evaluation, options), type, evaluation)
         with RandomEnv(evaluation) as rand:
             return [
@@ -1400,19 +1408,19 @@ class RandomWord(_WordListBuiltin):
                 for _ in range(n)
             ]
 
-    def apply(self, evaluation, options):
+    def eval(self, evaluation: Evaluation, options: dict):
         "RandomWord[OptionsPattern[%(name)s]]"
         words = self._random_words("All", 1, evaluation, options)
         if words:
             return words[0]
 
-    def apply_type(self, type, evaluation, options):
+    def eval_type(self, type, evaluation: Evaluation, options: dict):
         "RandomWord[type_String, OptionsPattern[%(name)s]]"
         words = self._random_words(type.value, 1, evaluation, options)
         if words:
             return words[0]
 
-    def apply_type_n(self, type, n, evaluation, options):
+    def eval_type_n(self, type, n, evaluation: Evaluation, options: dict):
         "RandomWord[type_String, n_Integer, OptionsPattern[%(name)s]]"
         words = self._random_words(type.value, n.value, evaluation, options)
         if words:
@@ -1435,7 +1443,7 @@ class LanguageIdentify(Builtin):
         "pycountry",
     )
 
-    def apply(self, text, evaluation):
+    def eval(self, text: String, evaluation: Evaluation) -> Union[Symbol, String]:
         "LanguageIdentify[text_String]"
         import langid  # see https://github.com/saffsd/langid.py
 
@@ -1445,7 +1453,7 @@ class LanguageIdentify(Builtin):
         code, _ = langid.classify(text.value)
         language = pycountry.languages.get(alpha_2=code)
         if language is None:
-            return Symbol("$Failed")
+            return SymbolFailed
         return String(language.name)
 
 
@@ -1462,7 +1470,7 @@ class Pluralize(Builtin):
 
     requires = ("pattern",)
 
-    def apply(self, word, evaluation):
+    def eval(self, word, evaluation):
         "Pluralize[word_String]"
         from pattern.en import pluralize
 
@@ -1500,7 +1508,9 @@ class SpellingCorrectionList(Builtin):
 
     _dictionaries = {}
 
-    def apply(self, word, evaluation, options):
+    def eval(
+        self, word: String, evaluation: Evaluation, options: dict
+    ) -> Optional[ListExpression]:
         "SpellingCorrectionList[word_String, OptionsPattern[%(name)s]]"
         import enchant
 

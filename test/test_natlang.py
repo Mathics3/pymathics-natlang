@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from .helper import session, check_evaluation
+from .helper import check_evaluation, session
 
 
 def test_natlang():
@@ -45,6 +45,11 @@ def test_natlang():
             'TextCases["I was in London last year.", "Pronoun"]',
             '{"I"}',
             "TextCases",
+        ),
+        (
+            'Pluralize["try"]',
+            '"I"',
+            "Pluralize",
         ),
     ):
         check_evaluation(str_expr, str_expected, message)
