@@ -1,22 +1,25 @@
 # -*- coding: utf-8 -*-
 # FIXME: split this up into smaller pieces
 
-"""Natural language functions.
+"""
+Natural language functions.
 
 The following Python Packages are used:
 
-* ``spacy`` is used for parsing natural languages
-* ``nltk`` is used for functions using WordNet-related builtins
-* `langid``, and ``pycountry`` are used for ``LanguageIdentify[]``
-* ``pyenchant`` is used for SpellingCorrectionList[]
+<ul>
+  <li> 'spacy' is used for parsing natural languages
+  <li> 'nltk' is used for functions using WordNet-related builtins
+  <li> 'langid', and `'pycountry' are used for 'LanguageIdentify[]'
+  <li> 'pyenchant'` is used for 'SpellingCorrectionList[]'
+</ul>
 
 User customization:
 
-For nltk, use the environment variable NLTK_DATA to specify a custom
-data path (instead of $HOME/.nltk).  For spacy, eset  MATHICS3_SPACY_DATA,
-a Mathics3-specific variable.
+For nltk, use the environment variable NLTK_DATA to specify a custom \
+data path (instead of $HOME/.nltk).  For spacy, set 'MATHICS3_SPACY_DATA', \
+a Mathics3-specific variable. \
 
-In order to use the Extended Open Multilingual Wordnet (OMW) with NLTK
+In order to use the Extended Open Multilingual Wordnet (OMW) with 'NLTK'
 and use even more languages, you need to install them manually.
 
 Go to http://compling.hss.ntu.edu.sg/omw/summx.html, download the

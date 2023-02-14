@@ -1,9 +1,8 @@
 """Pymathics Natlang
 
-This module provides Mathics functions and varialbles to work with
-expressions in natural language, using the libraries ``nltk`` and
-``spacy``.
-
+This module provides Mathics functions and variables to work with \
+expressions in natural language, using the libraries 'nltk' and  \
+'spacy'.
 """
 
 
