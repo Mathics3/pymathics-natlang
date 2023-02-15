@@ -69,8 +69,11 @@ pytest:
 # 	$(PYTHON) mathics/test.py -ot -k
 
 #: Run tests that appear in docstring in the code.
+
+
 doctest:
-	$(PYTHON) mathics/test.py $o
+	MATHICS_CHARACTER_ENCODING="ASCII" $(PYTHON) -m mathics.docpipeline -l pymathics.natlang -c  'Graphs - Vertices and Edges' $o
+
 
 # #: Make Mathics PDF manual
 # doc mathics.pdf: mathics/doc/tex/data
@@ -83,3 +86,7 @@ rmChangeLog:
 #: Create a ChangeLog from git via git log and git2cl
 ChangeLog: rmChangeLog
 	git log --pretty --numstat --summary | $(GIT2CL) >$@
+
+#: Run pytest consistency and style checks
+check-consistency-and-style:
+	MATHICS_LINT=t $(PYTHON) -m pytest test/consistency-and-style
