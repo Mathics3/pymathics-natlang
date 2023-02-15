@@ -50,7 +50,7 @@ install: pypi-setup
 	$(PYTHON) setup.py install
 
 #: Run tests
-test check: pytest
+test check: pytest doctest
 
 #: Remove derived files
 clean: clean-pyc
