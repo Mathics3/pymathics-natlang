@@ -6,7 +6,7 @@
 
 GIT2CL ?= admin-tools/git2cl
 PYTHON ?= python3
-PIP ?= pip3
+PIP ?= $(PYTHON) -m pip
 RM  ?= rm
 
 # Two-letter language code, e.g. fr, zh
@@ -50,7 +50,7 @@ install: pypi-setup
 	$(PYTHON) setup.py install
 
 #: Run tests
-check: pytest
+test check: pytest
 
 #: Remove derived files
 clean: clean-pyc
