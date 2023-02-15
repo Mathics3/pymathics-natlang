@@ -72,7 +72,7 @@ pytest:
 
 
 doctest:
-	MATHICS_CHARACTER_ENCODING="ASCII" $(PYTHON) -m mathics.docpipeline -l pymathics.natlang -c  'Graphs - Vertices and Edges' $o
+	MATHICS_CHARACTER_ENCODING="ASCII" $(PYTHON) -m mathics.docpipeline -l pymathics.natlang $o
 
 
 # #: Make Mathics PDF manual
