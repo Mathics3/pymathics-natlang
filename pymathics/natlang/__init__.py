@@ -9,6 +9,10 @@ expressions in natural language, using the libraries 'nltk' and  \
 from pymathics.natlang.main import *
 from pymathics.natlang.version import __version__
 
+import nltk
+
+nltk.download()
+
 pymathics_version_data = {
     "author": "The Mathics Team",
     "version": __version__,

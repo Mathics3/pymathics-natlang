@@ -87,9 +87,5 @@ setup(
 )
 
 
-# This loads the nltk wordnet corpus. 
-import  nltk
-nltk.download()
-
 os.system("%s -m nltk.downloader wordnet omw" % sys.executable)
 os.system("%s -m spacy download %s" % (sys.executable, lang))
