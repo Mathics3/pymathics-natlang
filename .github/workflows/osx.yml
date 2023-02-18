@@ -38,6 +38,6 @@ jobs:
     - name: Install pymathics.natlang
       run: |
         pip install -e .
-    - name: Test Mathics
+    - name: Test natlang
       run: |
         make check
