@@ -72,7 +72,7 @@ pytest:
 
 
 doctest:
-	MATHICS_CHARACTER_ENCODING="ASCII" $(PYTHON) -m mathics.docpipeline -l pymathics.natlang -c  "Pymathics Natlang"  $o
+	MATHICS_CHARACTER_ENCODING="ASCII" $(PYTHON) -m mathics.docpipeline -l pymathics.natlang -c  "Natural Language Processing"  $o
 
 
 # #: Make Mathics PDF manual

@@ -44,6 +44,9 @@ WORDLIST_SIZE = os.environ.get("WORDLIST_SIZE", "md")
 
 SPACY_DOWNLOAD = os.environ.get("SPACY_DOWNLOAD", "%s" % (lang,))
 
+# FIXME:
+# consider using langid3 and pyenchant
+
 setup(
     name="pymathics-natlang",
     version=__version__,
@@ -52,14 +55,18 @@ setup(
         "Mathics3 >5.0.2,<6.1.0",
         "click>=8.0",
         "joblib>=1.0.1",
+        "langid",  # replace with a supported newer package, e.g. via spacy
         "llvmlite>=0.36",
-        "nltk>=3.6.1",
+        "nltk>=3.8.0",
         "pattern>=3.6.0",
+        "pyenchant>=3.2.0",
+        "pycountry>=3.2.0",
         "spacy>=3.4",
         "wasabi<1.1.0,>=0.8.2",
     ],
     zip_safe=False,
-    maintainer="Mathics Group",
+    maintainer="Mathics3 Group",
+    maintainer_email="rb@dustyfeet.com",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     # metadata for upload to PyPI
