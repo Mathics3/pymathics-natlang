@@ -68,9 +68,8 @@ Adjust "python" and "en" (the language you want) above as needed.
 User customization
 ------------------
 
-For nltk, use the environment variable ``NLTK_DATA`` to specify a
-custom data path (instead of $HOME/.nltk).  For spacy, set
-'MATHICS3_SPACY_DATA', a Mathics3-specific variable.
+.. reinstate after this is fixed in the code
+.. For nltk, use the environment variable ``NLTK_DATA`` to specify a custom data path (instead of $HOME/.nltk).  For spacy, set 'MATHICS3_SPACY_DATA', a Mathics3-specific variable.
 
 In order to use the Extended Open Multilingual Wordnet (OMW) with 'NLTK'
 and use even more languages, you need to install them manually.
