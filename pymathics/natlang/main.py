@@ -2,7 +2,7 @@
 # FIXME: split this up into smaller pieces
 
 """
-Natural language functions
+Natural Language Functions
 
 """
 
@@ -389,7 +389,7 @@ class DeleteStopwords(_SpacyBuiltin):
     </dl>
 
     ## This has changed since old versions of natlang, and I am
-    ## I am not sure the old behavior was correct.
+    ## not sure the old behavior was correct.
     ## >> DeleteStopwords[{"Somewhere", "over", "the", "rainbow"}]
     ##  = {rainbow}
 
