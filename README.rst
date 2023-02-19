@@ -64,6 +64,34 @@ You might be able to fix this running:
 
 Adjust "python" and "en" (the language you want) above as needed.
 
+
+User customization
+------------------
+
+For nltk, use the environment variable ``NLTK_DATA`` to specify a
+custom data path (instead of $HOME/.nltk).  For spacy, set
+'MATHICS3_SPACY_DATA', a Mathics3-specific variable.
+
+In order to use the Extended Open Multilingual Wordnet (OMW) with 'NLTK'
+and use even more languages, you need to install them manually.
+
+Go to http://compling.hss.ntu.edu.sg/omw/summx.html, download the data, and then create a new folder under
+``$HOME/nltk_data/corpora/omw/your_language`` where you put the file from
+wiki/wn-wikt-your_language.tab, and rename it to
+wn-data-your_language.tab.
+
+Adding more languages to Open Multilingual Wordnet:
+
+In order to use the Extended Open Multilingual Wordnet with NLTK and
+use even more languages, you need to install them manually. Go to
+http://compling.hss.ntu.edu.sg/omw/summx.html, download the data, and
+then create a new folder under
+$HOME/nltk_data/corpora/omw/your_language where you put the file from
+wiki/wn-wikt-your_language.tab, and rename it to
+wn-data-your_language.tab.
+
+
+
 .. |Latest Version| image:: https://badge.fury.io/py/pymathics-natlang.svg
 		 :target: https://badge.fury.io/py/pymathics-natlang
 .. |Pypi Installs| image:: https://pepy.tech/badge/pymathics-natlang

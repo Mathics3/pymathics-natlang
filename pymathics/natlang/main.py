@@ -2,41 +2,7 @@
 # FIXME: split this up into smaller pieces
 
 """
-Natural language functions.
-
-The following Python Packages are used:
-
-<ul>
-  <li> 'spacy' is used for parsing natural languages
-  <li> 'nltk' is used for functions using WordNet-related builtins
-  <li> 'langid', and `'pycountry' are used for 'LanguageIdentify[]'
-  <li> 'pyenchant'` is used for 'SpellingCorrectionList[]'
-</ul>
-
-User customization:
-
-For nltk, use the environment variable NLTK_DATA to specify a custom \
-data path (instead of $HOME/.nltk).  For spacy, set 'MATHICS3_SPACY_DATA', \
-a Mathics3-specific variable. \
-
-In order to use the Extended Open Multilingual Wordnet (OMW) with 'NLTK'
-and use even more languages, you need to install them manually.
-
-Go to http://compling.hss.ntu.edu.sg/omw/summx.html, download the
-data, and then create a new folder under
-$HOME/nltk_data/corpora/omw/your_language where you put the file from
-wiki/wn-wikt-your_language.tab, and rename it to
-wn-data-your_language.tab.
-
-Adding more languages to Open Multilingual Wordnet:
-
-In order to use the Extended Open Multilingual Wordnet with NLTK and
-use even more languages, you need to install them manually. Go to
-http://compling.hss.ntu.edu.sg/omw/summx.html, download the data, and
-then create a new folder under
-$HOME/nltk_data/corpora/omw/your_language where you put the file from
-wiki/wn-wikt-your_language.tab, and rename it to
-wn-data-your_language.tab.
+Natural language functions
 
 """
 
@@ -48,6 +14,10 @@ import re
 from itertools import chain
 from typing import Optional, Union
 
+import enchant
+import langid  # see https://github.com/saffsd/langid.py
+import pycountry
+import spacy
 from mathics.builtin.atomic.strings import anchor_pattern, to_regex
 from mathics.builtin.base import Builtin, MessageException
 from mathics.builtin.codetables import iso639_3
@@ -57,7 +27,9 @@ from mathics.core.convert.expression import ListExpression, to_mathics_list
 from mathics.core.evaluation import Evaluation
 from mathics.core.expression import Expression
 from mathics.core.symbols import Symbol, SymbolFalse, SymbolTrue, strip_context
-from mathics.core.systemsymbols import SymbolFailed, SymbolMissing, SymbolN, SymbolRule
+from mathics.core.systemsymbols import SymbolFailed, SymbolMissing, SymbolRule
+from mathics.eval.nevaluator import eval_N
+from pattern.en import pluralize
 
 SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
 
@@ -114,75 +86,67 @@ def _make_forms():
 _wordnet_pos_to_type = {}
 _wordnet_type_to_pos = {}
 
-try:
-    import nltk
+import nltk
 
-    def _init_nltk_maps():
-        _wordnet_pos_to_type.update(
-            {
-                nltk.corpus.wordnet.VERB: "Verb",
-                nltk.corpus.wordnet.NOUN: "Noun",
-                nltk.corpus.wordnet.ADJ: "Adjective",
-                nltk.corpus.wordnet.ADJ_SAT: "Adjective",
-                nltk.corpus.wordnet.ADV: "Adverb",
-            }
-        )
-        _wordnet_type_to_pos.update(
-            {
-                "Verb": [nltk.corpus.wordnet.VERB],
-                "Noun": [nltk.corpus.wordnet.NOUN],
-                "Adjective": [nltk.corpus.wordnet.ADJ, nltk.corpus.wordnet.ADJ_SAT],
-                "Adverb": [nltk.corpus.wordnet.ADV],
-            }
-        )
 
-except ImportError:
-    pass
+def _init_nltk_maps():
+    _wordnet_pos_to_type.update(
+        {
+            nltk.corpus.wordnet.VERB: "Verb",
+            nltk.corpus.wordnet.NOUN: "Noun",
+            nltk.corpus.wordnet.ADJ: "Adjective",
+            nltk.corpus.wordnet.ADJ_SAT: "Adjective",
+            nltk.corpus.wordnet.ADV: "Adverb",
+        }
+    )
+    _wordnet_type_to_pos.update(
+        {
+            "Verb": [nltk.corpus.wordnet.VERB],
+            "Noun": [nltk.corpus.wordnet.NOUN],
+            "Adjective": [nltk.corpus.wordnet.ADJ, nltk.corpus.wordnet.ADJ_SAT],
+            "Adverb": [nltk.corpus.wordnet.ADV],
+        }
+    )
 
-try:
-    import spacy
-    from spacy.tokens import Span
 
-    # Part of speech tags and their public interface names in Mathics
-    # see http://www.mathcs.emory.edu/~choi/doc/clear-dependency-2012.pdf
-    _pos_tags = {
-        spacy.parts_of_speech.ADJ: ("Adjective", ""),
-        spacy.parts_of_speech.ADP: ("Preposition", "Prepositional Phrase"),
-        spacy.parts_of_speech.ADV: ("Adverb", ""),
-        spacy.parts_of_speech.CONJ: ("Conjunct", ""),
-        spacy.parts_of_speech.DET: ("Determiner", ""),
-        spacy.parts_of_speech.INTJ: ("Interjection", ""),
-        spacy.parts_of_speech.NOUN: ("Noun", "Noun Phrase"),
-        spacy.parts_of_speech.NUM: ("Number", ""),
-        spacy.parts_of_speech.PART: ("Particle", ""),
-        spacy.parts_of_speech.PRON: ("Pronoun", ""),
-        spacy.parts_of_speech.PROPN: ("Proposition", ""),
-        spacy.parts_of_speech.PUNCT: ("Punctuation", ""),
-        spacy.parts_of_speech.SCONJ: ("Sconj", ""),
-        spacy.parts_of_speech.SYM: ("Symbol", ""),
-        spacy.parts_of_speech.VERB: ("Verb", "Verb Phrase"),
-        spacy.parts_of_speech.X: ("X", ""),
-        spacy.parts_of_speech.EOL: ("EOL", ""),
-        spacy.parts_of_speech.SPACE: ("Space", ""),
-    }
+from spacy.tokens import Span
 
-    # Mathics named entitiy names and their corresponding constants in spacy.
-    _symbols = {
-        "Person": spacy.symbols.PERSON,
-        "Company": spacy.symbols.ORG,
-        "Quantity": spacy.symbols.QUANTITY,
-        "Number": spacy.symbols.CARDINAL,
-        "CurrencyAmount": spacy.symbols.MONEY,
-        "Country": spacy.symbols.GPE,  # also includes cities and states
-        "City": spacy.symbols.GPE,  # also includes countries and states
-    }
+# Part of speech tags and their public interface names in Mathics
+# see http://www.mathcs.emory.edu/~choi/doc/clear-dependency-2012.pdf
+_pos_tags = {
+    spacy.parts_of_speech.ADJ: ("Adjective", ""),
+    spacy.parts_of_speech.ADP: ("Preposition", "Prepositional Phrase"),
+    spacy.parts_of_speech.ADV: ("Adverb", ""),
+    spacy.parts_of_speech.CONJ: ("Conjunct", ""),
+    spacy.parts_of_speech.DET: ("Determiner", ""),
+    spacy.parts_of_speech.INTJ: ("Interjection", ""),
+    spacy.parts_of_speech.NOUN: ("Noun", "Noun Phrase"),
+    spacy.parts_of_speech.NUM: ("Number", ""),
+    spacy.parts_of_speech.PART: ("Particle", ""),
+    spacy.parts_of_speech.PRON: ("Pronoun", ""),
+    spacy.parts_of_speech.PROPN: ("Proposition", ""),
+    spacy.parts_of_speech.PUNCT: ("Punctuation", ""),
+    spacy.parts_of_speech.SCONJ: ("Sconj", ""),
+    spacy.parts_of_speech.SYM: ("Symbol", ""),
+    spacy.parts_of_speech.VERB: ("Verb", "Verb Phrase"),
+    spacy.parts_of_speech.X: ("X", ""),
+    spacy.parts_of_speech.EOL: ("EOL", ""),
+    spacy.parts_of_speech.SPACE: ("Space", ""),
+}
 
-    # forms are everything one can use in TextCases[] or TextPosition[].
-    _forms = _make_forms()
-except ImportError:
-    _pos_tags = {}
-    _symbols = {}
-    _forms = {}
+# Mathics3 named entitiy names and their corresponding constants in spacy.
+_symbols = {
+    "Person": spacy.symbols.PERSON,
+    "Company": spacy.symbols.ORG,
+    "Quantity": spacy.symbols.QUANTITY,
+    "Number": spacy.symbols.CARDINAL,
+    "CurrencyAmount": spacy.symbols.MONEY,
+    "Country": spacy.symbols.GPE,  # also includes cities and states
+    "City": spacy.symbols.GPE,  # also includes countries and states
+}
+
+# forms are everything one can use in TextCases[] or TextPosition[].
+_forms = _make_forms()
 
 
 def _merge_dictionaries(a, b):
@@ -455,6 +419,7 @@ class WordFrequency(_SpacyBuiltin):
     >> text = "I have a dairy cow, it's not just any cow. \
        She gives me milkshake, oh what a salty cow. She is the best\
        cow in the county.";
+
     >> WordFrequency[text, "a" | "the"]
      = 0.114286
 
@@ -465,7 +430,9 @@ class WordFrequency(_SpacyBuiltin):
     options = _SpacyBuiltin.options
     options.update({"IgnoreCase": "False"})
 
-    def eval(self, text: String, word, evaluation: Evaluation, options: dict):
+    def eval(
+        self, text: String, word, evaluation: Evaluation, options: dict
+    ) -> Optional[Expression]:
         "WordFrequency[text_String, word_, OptionsPattern[%(name)s]]"
         doc = self._nlp(text.value, evaluation, options)
         if not doc:
@@ -484,12 +451,12 @@ class WordFrequency(_SpacyBuiltin):
             words = [w.lower() for w in words]
         n = 0
         for token in doc:
-            text = token.text
+            token_text = token.text
             if ignore_case:
-                text = text.lower()
-            if text in words:
+                token_text = token_text.lower()
+            if token_text in words:
                 n += 1
-        return Expression(SymbolN, Integer(n) / Integer(len(doc)))
+        return eval_N(Integer(n) / Integer(len(doc)), evaluation)
 
 
 class Containing(Builtin):
@@ -690,10 +657,10 @@ class WordSimilarity(_SpacyBuiltin):
       <dt>'WordSimilarity[$text1$, $text2$]'
       <dd>returns a real-valued measure of semantic similarity of two texts or words.
 
-      <dt>'WordSimilarity[{$text1$, $i1$}, {$text2, $j1$}]'
+      <dt>'WordSimilarity[{$text1$, $i1$}, {$text2$, $j1$}]'
       <dd>returns a measure of similarity of two words within two texts.
 
-      <dt>'WordSimilarity[{$text1$, {$i1$, $i2$, ...}}, {$text2, {$j1$, $j2$, ...}}]'
+      <dt>'WordSimilarity[{$text1$, {$i1$, $i2$, ...}}, {$text2$, {$j1$, $j2$, ...}}]'
       <dd>returns a measure of similarity of multiple words within two texts.
     </dl>
 
@@ -1131,15 +1098,17 @@ class WordData(_WordListBuiltin):
     </dl>
 
     The following are valid properties:
-    - Definitions, Examples
-    - InflectedForms
-    - Synonyms, Antonyms
-    - BroaderTerms, NarrowerTerms
-    - WholeTerms, PartTerms, MaterialTerms
-    - EntailedTerms, CausesTerms
-    - UsageField
-    - WordNetID
-    - Lookup
+    <ul>
+      <li> Definitions, Examples
+      <li> InflectedForms
+      <li> Synonyms, Antonyms
+      <li> BroaderTerms, NarrowerTerms
+      <li> WholeTerms, PartTerms, MaterialTerms
+      <li> EntailedTerms, CausesTerms
+      <li> UsageField
+      <li>d WordNetID
+      <li> Lookup
+    </ul>
 
     ## Not working yet
     ## >> WordData["riverside", "Definitions"]
@@ -1314,7 +1283,7 @@ class DictionaryLookup(_WordListBuiltin):
       <dt>'DictionaryLookup[$word$]'
       <dd>lookup words that match the given $word$ or pattern.
 
-    <dt>'DictionaryLookup[$word$, $n$]'
+      <dt>'DictionaryLookup[$word$, $n$]'
       <dd>lookup first $n$ words that match the given $word$ or pattern.
     </dl>
 
@@ -1345,7 +1314,7 @@ class DictionaryLookup(_WordListBuiltin):
         pattern = self.compile(word, evaluation)
         if pattern:
             dictionary_words = self._words(language_name, "All", evaluation)
-            if dictionary_words:
+            if dictionary_words is not None:
                 matches = self.search(dictionary_words, pattern)
                 if n is not None:
                     matches = itertools.islice(matches, 0, n)
@@ -1385,7 +1354,7 @@ class WordList(_WordListBuiltin):
     def eval(self, evaluation: Evaluation, options: dict):
         "WordList[OptionsPattern[%(name)s]]"
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
-        if words:
+        if words is not None:
             return to_mathics_list(*words, elements_conversion_fn=String)
 
     def eval_type(self, wordtype, evaluation: Evaluation, options: dict):
@@ -1395,7 +1364,7 @@ class WordList(_WordListBuiltin):
             wordtype.value,
             evaluation,
         )
-        if words:
+        if words is not None:
             return to_mathics_list(*words, elements_conversion_fn=String)
 
 
@@ -1415,11 +1384,12 @@ class RandomWord(_WordListBuiltin):
 
     def _random_words(self, type, n, evaluation: Evaluation, options: dict):
         words = self._words(self._language_name(evaluation, options), type, evaluation)
-        with RandomEnv(evaluation) as rand:
-            return [
-                String(words[rand.randint(0, len(words) - 1)].replace("_", " "))
-                for _ in range(n)
-            ]
+        if words is not None:
+            with RandomEnv(evaluation) as rand:
+                return [
+                    String(words[rand.randint(0, len(words) - 1)].replace("_", " "))
+                    for _ in range(n)
+                ]
 
     def eval(self, evaluation: Evaluation, options: dict):
         "RandomWord[OptionsPattern[%(name)s]]"
@@ -1443,7 +1413,7 @@ class RandomWord(_WordListBuiltin):
 class LanguageIdentify(Builtin):
     """
     <dl>
-    <dt>'LanguageIdentify[$text$]'
+      <dt>'LanguageIdentify[$text$]'
       <dd>returns the name of the language used in $text$.
     </dl>
 
@@ -1451,17 +1421,10 @@ class LanguageIdentify(Builtin):
      = German
     """
 
-    requires = (
-        "langid",
-        "pycountry",
-    )
-
     def eval(self, text: String, evaluation: Evaluation) -> Union[Symbol, String]:
         "LanguageIdentify[text_String]"
-        import langid  # see https://github.com/saffsd/langid.py
 
         # an alternative: https://github.com/Mimino666/langdetect
-        import pycountry
 
         code, _ = langid.classify(text.value)
         language = pycountry.languages.get(alpha_2=code)
@@ -1473,7 +1436,7 @@ class LanguageIdentify(Builtin):
 class Pluralize(Builtin):
     """
     <dl>
-    <dt>'Pluralize[$word$]'
+      <dt>'Pluralize[$word$]'
       <dd>returns the plural form of $word$.
     </dl>
 
@@ -1485,7 +1448,6 @@ class Pluralize(Builtin):
 
     def eval(self, word, evaluation):
         "Pluralize[word_String]"
-        from pattern.en import pluralize
 
         return String(pluralize(word.value))
 
@@ -1493,7 +1455,7 @@ class Pluralize(Builtin):
 class SpellingCorrectionList(Builtin):
     """
     <dl>
-    <dt>'SpellingCorrectionList[$word$]'
+      <dt>'SpellingCorrectionList[$word$]'
       <dd>returns a list of suggestions for spelling corrected versions of $word$.
     </dl>
 
@@ -1502,8 +1464,6 @@ class SpellingCorrectionList(Builtin):
     >> SpellingCorrectionList["hipopotamus"]
      = {hippopotamus...}
     """
-
-    requires = ("enchant",)
 
     options = {
         "Language": '"English"',
@@ -1525,7 +1485,6 @@ class SpellingCorrectionList(Builtin):
         self, word: String, evaluation: Evaluation, options: dict
     ) -> Optional[ListExpression]:
         "SpellingCorrectionList[word_String, OptionsPattern[%(name)s]]"
-        import enchant
 
         language_name = self.get_option(options, "Language", evaluation)
         if not isinstance(language_name, String):
