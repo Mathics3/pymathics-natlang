@@ -2,14 +2,15 @@
 # FIXME: split this up into smaller pieces
 
 """
-Natural language functions
+Natural Language Functions
 
 """
 
 import heapq
 import itertools
 import math
-import os
+
+# import os
 import re
 from itertools import chain
 from typing import Optional, Union
@@ -23,15 +24,32 @@ from mathics.builtin.base import Builtin, MessageException
 from mathics.builtin.codetables import iso639_3
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import Integer, Real, String
-from mathics.core.convert.expression import ListExpression, to_mathics_list
+from mathics.core.convert.expression import (
+    ListExpression,
+    to_expression,
+    to_mathics_list,
+)
 from mathics.core.evaluation import Evaluation
 from mathics.core.expression import Expression
-from mathics.core.symbols import Symbol, SymbolFalse, SymbolTrue, strip_context
-from mathics.core.systemsymbols import SymbolFailed, SymbolMissing, SymbolRule
+from mathics.core.symbols import (
+    Symbol,
+    SymbolFalse,
+    SymbolList,
+    SymbolTrue,
+    strip_context,
+)
+from mathics.core.systemsymbols import (
+    SymbolFailed,
+    SymbolMissing,
+    SymbolRule,
+    SymbolStringExpression,
+)
 from mathics.eval.nevaluator import eval_N
 from pattern.en import pluralize
 
 SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
+
+StringNotAvailable = String("NotAvailable")
 
 
 def _parse_nltk_lookup_error(e):
@@ -212,12 +230,15 @@ class _SpacyBuiltin(Builtin):
             return instance
 
         try:
-            if "MATHICS3_SPACY_DATA" in os.environ:
-                instance = spacy.load(
-                    language_code, via=os.environ["MATHICS3_SPACY_DATA"]
-                )
-            else:
-                instance = spacy.load(f"{language_code}_core_web_md")
+            instance = spacy.load(f"{language_code}_core_web_md")
+
+            # "via" parameter no longer exists. This was used in MATHICS3_SPACY_DATA
+            # if "MATHICS3_SPACY_DATA" in os.environ:
+            #     instance = spacy.load(
+            #         language_code, via=os.environ["MATHICS3_SPACY_DATA"]
+            #     )
+            # else:
+            #     instance = spacy.load(f"{language_code}_core_web_md")
 
             _SpacyBuiltin._spacy_instances[language_code] = instance
             return instance
@@ -256,7 +277,7 @@ class WordFrequencyData(_SpacyBuiltin):
     # http://commondatastorage.googleapis.com/books/syntactic-ngrams/index.html
 
     def eval(self, word: String, evaluation: Evaluation, options: dict) -> Real:
-        "WordFrequencyData[word_String,  OptionsPattern[%(name)s]]"
+        "WordFrequencyData[word_String,  OptionsPattern[WordFrequencyData]]"
         doc = self._nlp(word.value, evaluation, options)
         frequency = 0.0
         if doc:
@@ -277,7 +298,7 @@ class WordCount(_SpacyBuiltin):
     """
 
     def eval(self, text, evaluation: Evaluation, options: dict):
-        "WordCount[text_String, OptionsPattern[%(name)s]]"
+        "WordCount[text_String, OptionsPattern[WordCount]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
@@ -301,7 +322,7 @@ class TextWords(_SpacyBuiltin):
     def eval(
         self, text: String, evaluation: Evaluation, options: dict
     ) -> Optional[ListExpression]:
-        "TextWords[text_String, OptionsPattern[%(name)s]]"
+        "TextWords[text_String, OptionsPattern[WordCount]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
@@ -310,7 +331,7 @@ class TextWords(_SpacyBuiltin):
             )
 
     def eval_n(self, text: String, n: Integer, evaluation: Evaluation, options: dict):
-        "TextWords[text_String, n_Integer, OptionsPattern[%(name)s]]"
+        "TextWords[text_String, n_Integer, OptionsPattern[TextWords]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
@@ -343,13 +364,13 @@ class TextSentences(_SpacyBuiltin):
     """
 
     def eval(self, text: String, evaluation: Evaluation, options: dict):
-        "TextSentences[text_String, OptionsPattern[%(name)s]]"
+        "TextSentences[text_String, OptionsPattern[TextSentences]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return ListExpression(*[String(sent.text) for sent in doc.sents])
 
     def eval_n(self, text: String, n: Integer, evaluation: Evaluation, options: dict):
-        "TextSentences[text_String, n_Integer, OptionsPattern[%(name)s]]"
+        "TextSentences[text_String, n_Integer, OptionsPattern[TextSentences]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return ListExpression(
@@ -367,29 +388,31 @@ class DeleteStopwords(_SpacyBuiltin):
       <dd>returns $string$ without stopwords.
     </dl>
 
-    >> DeleteStopwords[{"Somewhere", "over", "the", "rainbow"}]
-     = {rainbow}
+    ## This has changed since old versions of natlang, and I am
+    ## not sure the old behavior was correct.
+    ## >> DeleteStopwords[{"Somewhere", "over", "the", "rainbow"}]
+    ##  = {rainbow}
 
     >> DeleteStopwords["There was an Old Man of Apulia, whose conduct was very peculiar"]
      = Old Man Apulia, conduct peculiar
     """
 
     def eval_list(self, li, evaluation: Evaluation, options: dict) -> ListExpression:
-        "DeleteStopwords[li_List, OptionsPattern[%(name)s]]"
+        "DeleteStopwords[li_List, OptionsPattern[DeleteStopwords]]"
         is_stop = self._is_stop_lambda(evaluation, options)
 
         def filter_words(words):
             for w in words:
                 s = w.get_string_value()
-                if not s:
+                if s is not None:
                     yield String(s)
-                elif not is_stop(s):
+                elif is_stop is not None and is_stop(s) is not None:
                     yield String(s)
 
         return ListExpression(*list(filter_words(li.elements)))
 
     def eval_string(self, s: String, evaluation: Evaluation, options: dict):
-        "DeleteStopwords[s_String, OptionsPattern[%(name)s]]"
+        "DeleteStopwords[s_String, OptionsPattern[DeleteStopwords]]"
         doc = self._nlp(s.value, evaluation, options)
         if doc:
             is_stop = self._is_stop_lambda(evaluation, options)
@@ -433,7 +456,7 @@ class WordFrequency(_SpacyBuiltin):
     def eval(
         self, text: String, word, evaluation: Evaluation, options: dict
     ) -> Optional[Expression]:
-        "WordFrequency[text_String, word_, OptionsPattern[%(name)s]]"
+        "WordFrequency[text_String, word_, OptionsPattern[WordFrequency]]"
         doc = self._nlp(text.value, evaluation, options)
         if not doc:
             return
@@ -549,7 +572,7 @@ class TextCases(_SpacyBuiltin):
     def eval_string_form(
         self, text: String, form, evaluation: Evaluation, options: dict
     ):
-        "TextCases[text_String, form_,  OptionsPattern[%(name)s]]"
+        "TextCases[text_String, form_,  OptionsPattern[TextCases]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(*[t.text for t in _cases(doc, form)])
@@ -557,7 +580,7 @@ class TextCases(_SpacyBuiltin):
     def eval_string_form_n(
         self, text: String, form, n: Integer, evaluation: Evaluation, options: dict
     ):
-        "TextCases[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
+        "TextCases[text_String, form_, n_Integer,  OptionsPattern[TextCases]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(
@@ -577,7 +600,7 @@ class TextPosition(_SpacyBuiltin):
     """
 
     def eval_text_form(self, text: String, form, evaluation: Evaluation, options: dict):
-        "TextPosition[text_String, form_,  OptionsPattern[%(name)s]]"
+        "TextPosition[text_String, form_,  OptionsPattern[TextPosition]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(*[_position(t) for t in _cases(doc, form)])
@@ -585,7 +608,7 @@ class TextPosition(_SpacyBuiltin):
     def eval_text_form_n(
         self, text: String, form, n: Integer, evaluation: Evaluation, options: dict
     ):
-        "TextPosition[text_String, form_, n_Integer,  OptionsPattern[%(name)s]]"
+        "TextPosition[text_String, form_, n_Integer,  OptionsPattern[TextPosition]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             return to_mathics_list(
@@ -643,7 +666,7 @@ class TextStructure(_SpacyBuiltin):
         return roots
 
     def eval(self, text, evaluation: Evaluation, options: dict):
-        'TextStructure[text_String, "ConstituentString",  OptionsPattern[%(name)s]]'
+        'TextStructure[text_String, "ConstituentString",  OptionsPattern[TextStructure]]'
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             tree = self._to_tree(list(doc))
@@ -685,7 +708,7 @@ class WordSimilarity(_SpacyBuiltin):
     def eval(
         self, text1: String, text2: String, evaluation: Evaluation, options: dict
     ) -> Optional[Real]:
-        "WordSimilarity[text1_String, text2_String, OptionsPattern[%(name)s]]"
+        "WordSimilarity[text1_String, text2_String, OptionsPattern[WordSimilarity]]"
         doc1 = self._nlp(text1.value, evaluation, options)
         if doc1:
             doc2 = self._nlp(text2.value, evaluation, options)
@@ -693,7 +716,7 @@ class WordSimilarity(_SpacyBuiltin):
                 return Real(doc1.similarity(doc2))
 
     def eval_pair(self, text1, i1, text2, i2, evaluation: Evaluation, options: dict):
-        "WordSimilarity[{text1_String, i1_}, {text2_String, i2_}, OptionsPattern[%(name)s]]"
+        "WordSimilarity[{text1_String, i1_}, {text2_String, i2_}, OptionsPattern[WordSimilarity]]"
         doc1 = self._nlp(text1.value, evaluation, options)
         if doc1:
             if text2.value == text1.value:
@@ -701,10 +724,7 @@ class WordSimilarity(_SpacyBuiltin):
             else:
                 doc2 = self._nlp(text2.value, evaluation, options)
             if doc2:
-                if (
-                    i1.get_head_name() == "System`List"
-                    and i2.get_head_name() == "System`List"
-                ):
+                if i1.get_head() is SymbolList and i2.get_head() is SymbolList:
                     if len(i1.elements) != len(i2.elements):
                         evaluation.message("TextSimilarity", "idxfmt")
                         return
@@ -952,7 +972,7 @@ class WordDefinition(_WordNetBuiltin):
     """
 
     def eval(self, word, evaluation: Evaluation, options: dict):
-        "WordDefinition[word_String, OptionsPattern[%(name)s]]"
+        "WordDefinition[word_String, OptionsPattern[WordDefinition]]"
         wordnet, language_code = self._load_wordnet(
             evaluation, self._language_name(evaluation, options)
         )
@@ -961,7 +981,7 @@ class WordDefinition(_WordNetBuiltin):
             if senses:
                 return ListExpression(*[String(syn.definition()) for syn, _ in senses])
             else:
-                return Expression(SymbolMissing, "NotAvailable")
+                return Expression(SymbolMissing, StringNotAvailable)
 
 
 class WordProperty:
@@ -1106,16 +1126,15 @@ class WordData(_WordListBuiltin):
       <li> WholeTerms, PartTerms, MaterialTerms
       <li> EntailedTerms, CausesTerms
       <li> UsageField
-      <li>d WordNetID
+      <li> WordNetID
       <li> Lookup
     </ul>
 
-    ## Not working yet
-    ## >> WordData["riverside", "Definitions"]
-    ## = {{riverside, Noun, Bank} -> the bank of a river}
+    >> WordData["riverside", "Definitions"]
+     = {{riverside, Noun, Bank} -> the bank of a river}
 
-    ## >> WordData[{"fish", "Verb", "Angle"}, "Examples"]
-    ## = {{fish, Verb, Angle} -> {fish for compliments}}
+    >> WordData[{"fish", "Verb", "Angle"}, "Examples"]
+     = {{fish, Verb, Angle} -> {fish for compliments}}
     """
 
     messages = _merge_dictionaries(
@@ -1139,28 +1158,28 @@ class WordData(_WordListBuiltin):
     ):
         senses = self._senses(py_word, wordnet, language_code)
         if not senses:
-            return Expression(SymbolMissing, "NotAvailable")
+            return Expression(SymbolMissing, StringNotAvailable)
         elif py_form == "List":
             word_property = WordProperty(self._short_syn_form, wordnet, language_code)
             property_getter = getattr(
                 word_property, "%s" % self._underscore(py_property), None
             )
             if property_getter:
-                return ListExpression(
+                return to_mathics_list(
                     *[property_getter(syn, desc) for syn, desc in senses]
                 )
         elif py_form in ("Rules", "ShortRules"):
             syn_form = (lambda s: s) if py_form == "Rules" else (lambda s: s[0])
             word_property = WordProperty(syn_form, wordnet, language_code)
             property_getter = getattr(
-                word_property, "%s" % self._underscore(py_property), None
+                word_property, self._underscore(py_property), None
             )
             if property_getter:
                 list_expr_elements = [
-                    Expression(SymbolRule, desc, *property_getter(syn, desc))
+                    to_expression(SymbolRule, desc, property_getter(syn, desc))
                     for syn, desc in senses
                 ]
-                return ListExpression(*list_expr_elements)
+                return to_mathics_list(*list_expr_elements)
         evaluation.message(self.get_name(), "notprop", property)
 
     def _parts_of_speech(self, py_word, wordnet, language_code):
@@ -1168,7 +1187,7 @@ class WordData(_WordListBuiltin):
             syn.pos() for syn, _ in self._senses(py_word, wordnet, language_code)
         )
         if not parts:
-            return Expression(SymbolMissing, "NotAvailable")
+            return Expression(SymbolMissing, StringNotAvailable)
         else:
             return ListExpression(
                 *[String(s) for s in sorted([_wordnet_pos_to_type[p] for p in parts])]
@@ -1203,11 +1222,11 @@ class WordData(_WordListBuiltin):
         except MessageException as e:
             e.message(evaluation)
 
-    def eval(self, word, evaluation: Evaluation, options: dict):
-        "WordData[word_, OptionsPattern[%(name)s]]"
-        if word.get_head_name() == "System`StringExpression":
+    def eval(self, word, evaluation: Evaluation, options: dict) -> Optional[Expression]:
+        "WordData[word_, OptionsPattern[WordData]]"
+        if word.get_head() is SymbolStringExpression:
             return Expression(SymbolDictionaryLookup, word)
-        elif isinstance(word, String) or word.get_head_name() == "System`List":
+        elif isinstance(word, String) or word.get_head() is SymbolList:
             pass
         else:
             return
@@ -1223,14 +1242,15 @@ class WordData(_WordListBuiltin):
             return
 
         senses = self._senses(py_word, wordnet, language_code)
-        return ListExpression(*[[String(s) for s in desc] for syn, desc in senses])
+        if senses is not None:
+            return ListExpression(*[[String(s) for s in desc] for syn, desc in senses])
 
     def eval_property(self, word, property, evaluation: Evaluation, options: dict):
-        "WordData[word_, property_String, OptionsPattern[%(name)s]]"
-        if word.get_head_name() == "System`StringExpression":
+        "WordData[word_, property_String, OptionsPattern[WordData]]"
+        if word.get_head is SymbolStringExpression:
             if property.get_string_value() == "Lookup":
                 return Expression(SymbolDictionaryLookup, word)
-        elif isinstance(word, String) or word.get_head_name() == "System`List":
+        elif isinstance(word, String) or word.get_head() is SymbolList:
             return self._property(
                 word, property.get_string_value(), "ShortRules", evaluation, options
             )
@@ -1238,8 +1258,8 @@ class WordData(_WordListBuiltin):
     def eval_property_form(
         self, word, property, form, evaluation: Evaluation, options: dict
     ):
-        "WordData[word_, property_String, form_String, OptionsPattern[%(name)s]]"
-        if isinstance(word, String) or word.get_head_name() == "System`List":
+        "WordData[word_, property_String, form_String, OptionsPattern[WordData]]"
+        if isinstance(word, String) or word.get_head() is SymbolList:
             return self._property(
                 word,
                 property.value,
@@ -1264,7 +1284,7 @@ class DictionaryWordQ(_WordNetBuiltin):
     """
 
     def eval(self, word, evaluation: Evaluation, options: dict):
-        "DictionaryWordQ[word_String,  OptionsPattern[%(name)s]]"
+        "DictionaryWordQ[word_String,  OptionsPattern[DictionaryWordQ]]"
         if not isinstance(word, String):
             return False
         wordnet, language_code = self._load_wordnet(
@@ -1298,7 +1318,7 @@ class DictionaryLookup(_WordListBuiltin):
                 "StringExpression",
                 "invld",
                 pattern,
-                Expression("StringExpression", pattern),
+                Expression(SymbolStringExpression, pattern),
             )
             return
         re_patt = anchor_pattern(re_patt)
@@ -1352,13 +1372,13 @@ class WordList(_WordListBuiltin):
     """
 
     def eval(self, evaluation: Evaluation, options: dict):
-        "WordList[OptionsPattern[%(name)s]]"
+        "WordList[OptionsPattern[WordList]]"
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
         if words is not None:
             return to_mathics_list(*words, elements_conversion_fn=String)
 
     def eval_type(self, wordtype, evaluation: Evaluation, options: dict):
-        "WordList[wordtype_String, OptionsPattern[%(name)s]]"
+        "WordList[wordtype_String, OptionsPattern[WordList]]"
         words = self._words(
             self._language_name(evaluation, options),
             wordtype.value,
@@ -1392,19 +1412,19 @@ class RandomWord(_WordListBuiltin):
                 ]
 
     def eval(self, evaluation: Evaluation, options: dict):
-        "RandomWord[OptionsPattern[%(name)s]]"
+        "RandomWord[OptionsPattern[RandomWord]]"
         words = self._random_words("All", 1, evaluation, options)
         if words:
             return words[0]
 
     def eval_type(self, type, evaluation: Evaluation, options: dict):
-        "RandomWord[type_String, OptionsPattern[%(name)s]]"
+        "RandomWord[type_String, OptionsPattern[RandomWord]]"
         words = self._random_words(type.value, 1, evaluation, options)
         if words:
             return words[0]
 
     def eval_type_n(self, type, n, evaluation: Evaluation, options: dict):
-        "RandomWord[type_String, n_Integer, OptionsPattern[%(name)s]]"
+        "RandomWord[type_String, n_Integer, OptionsPattern[RandomWord]]"
         words = self._random_words(type.value, n.value, evaluation, options)
         if words:
             return ListExpression(*words)
@@ -1484,14 +1504,15 @@ class SpellingCorrectionList(Builtin):
     def eval(
         self, word: String, evaluation: Evaluation, options: dict
     ) -> Optional[ListExpression]:
-        "SpellingCorrectionList[word_String, OptionsPattern[%(name)s]]"
+        "SpellingCorrectionList[word_String, OptionsPattern[SpellingCorrectionList]]"
 
         language_name = self.get_option(options, "Language", evaluation)
         if not isinstance(language_name, String):
             return
         language_code = SpellingCorrectionList._languages.get(language_name.value, None)
         if not language_code:
-            return evaluation.message("SpellingCorrectionList", "lang", language_name)
+            evaluation.message("SpellingCorrectionList", "lang", language_name)
+            return
 
         d = SpellingCorrectionList._dictionaries.get(language_code, None)
         if not d:
