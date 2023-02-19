@@ -50,7 +50,7 @@ install: pypi-setup
 	$(PYTHON) setup.py install
 
 #: Run tests
-test check: pytest
+test check: pytest doctest
 
 #: Remove derived files
 clean: clean-pyc
@@ -69,8 +69,11 @@ pytest:
 # 	$(PYTHON) mathics/test.py -ot -k
 
 #: Run tests that appear in docstring in the code.
+
+
 doctest:
-	$(PYTHON) mathics/test.py $o
+	MATHICS_CHARACTER_ENCODING="ASCII" $(PYTHON) -m mathics.docpipeline -l pymathics.natlang -c  "Pymathics Natlang"  $o
+
 
 # #: Make Mathics PDF manual
 # doc mathics.pdf: mathics/doc/tex/data
@@ -83,3 +86,8 @@ rmChangeLog:
 #: Create a ChangeLog from git via git log and git2cl
 ChangeLog: rmChangeLog
 	git log --pretty --numstat --summary | $(GIT2CL) >$@
+
+#: Run pytest consistency and style checks
+check-consistency-and-style:
+	# MATHICS_LINT=t $(PYTHON) -m pytest test/consistency-and-style
+	echo "check-consistency-and-style deactivated. Activate me later. "

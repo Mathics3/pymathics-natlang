@@ -450,8 +450,13 @@ class WordFrequency(_SpacyBuiltin):
 
     $word$ may also specify multiple words using $a$ | $b$ | ...
 
-    >> WordFrequency[Import["ExampleData/EinsteinSzilLetter.txt"], "a" | "the"]
-     = 0.0665635
+    ## Problem with import for certain characters in the text.
+    ## >> text = Import["ExampleData/EinsteinSzilLetter.txt"];
+    >> text = "I have a dairy cow, it's not just any cow. \
+       She gives me milkshake, oh what a salty cow. She is the best\
+       cow in the county.";
+    >> WordFrequency[text, "a" | "the"]
+     = 0.114286
 
     >> WordFrequency["Apple Tree", "apple", IgnoreCase -> True]
      = 0.5
@@ -473,6 +478,7 @@ class WordFrequency(_SpacyBuiltin):
             words = set(a.value for a in word.elements)
         else:
             return  # error
+
         ignore_case = self.get_option(options, "IgnoreCase", evaluation) is SymbolTrue
         if ignore_case:
             words = [w.lower() for w in words]
@@ -565,8 +571,12 @@ class TextCases(_SpacyBuiltin):
     >> TextCases["I was in London last year.", "City"]
      = {London}
 
-    >> TextCases[Import["ExampleData/EinsteinSzilLetter.txt"], "Person", 3][[2;;3]]
-     = {L. Szilard, Joliot}
+    ## >> TextCases[Import["ExampleData/EinsteinSzilLetter.txt"], "Person", 3][[2;;3]]
+    ##  = {L. Szilard, Joliot}
+
+    >> TextCases["Anne, Peter and Mr Johnes say hello.", "Person", 3][[2;;3]]
+     = {Peter, Johnes}
+
     """
 
     def eval_string_form(
@@ -833,10 +843,10 @@ class _WordNetBuiltin(Builtin):
 
     def _init_wordnet(self, evaluation: Evaluation, language_name, language_code):
         try:
-            wordnet_resource = nltk.data.find("corpora/wordnet")
+            wordnet_resource = nltk.data.find("corpora/wordnet2022")
             _init_nltk_maps()
         except LookupError:
-            evaluation.message(self.get_name(), "package", "wordnet")
+            evaluation.message(self.get_name(), "package", "wordnet2022")
             return None
 
         try:
