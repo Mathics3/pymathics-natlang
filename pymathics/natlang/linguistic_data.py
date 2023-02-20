@@ -5,6 +5,7 @@ Linguistic Data
 See <url>:WMA:https://reference.wolfram.com/language/guide/LinguisticData.html</url> guide.
 
 """
+# This module uses both nltk and spacy. Maybe it makes sense to split this further.
 
 
 # TODO: Complete me

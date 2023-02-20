@@ -2,6 +2,10 @@
 
 Text normalization
 
+See <url>:WMA: https://reference.wolfram.com/language/guide/TextNormalization.html</url> guide.
+
+
+This module uses spacy as a backend.
 """
 import itertools
 from itertools import islice

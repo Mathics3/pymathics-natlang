@@ -3,8 +3,9 @@
 Text analysis functions
 
 <url>:See WMA guide:https://reference.wolfram.com/language/guide/TextAnalysis.html</url>
-
 """
+
+# This module uses both enchant, nltk and spacy. Maybe we want to split this further.
 
 import re
 from itertools import islice
