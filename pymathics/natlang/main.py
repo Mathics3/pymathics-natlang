@@ -265,27 +265,6 @@ class _SpacyBuiltin(Builtin):
         return is_stop
 
 
-class WordFrequencyData(_SpacyBuiltin):
-    """
-    <dl>
-      <dt>'WordFrequencyData[$word$]'
-      <dd>returns the frequency of $word$ in common English texts.
-    </dl>
-    """
-
-    # Mathematica uses the gargantuan Google n-gram corpus, see
-    # http://commondatastorage.googleapis.com/books/syntactic-ngrams/index.html
-
-    def eval(self, word: String, evaluation: Evaluation, options: dict) -> Real:
-        "WordFrequencyData[word_String,  OptionsPattern[WordFrequencyData]]"
-        doc = self._nlp(word.value, evaluation, options)
-        frequency = 0.0
-        if doc:
-            if len(doc) == 1:
-                frequency = math.exp(doc[0].prob)  # convert log probability
-        return Real(frequency)
-
-
 class WordCount(_SpacyBuiltin):
     """
     <dl>

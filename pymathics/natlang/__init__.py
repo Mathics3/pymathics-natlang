@@ -2,7 +2,7 @@
 Natural Language Processing
 
 Mathics3 Module module provides functions and variables to work with \
-expressions in natural language, using the libraries:
+expressions in natural language, using the Python libraries:
 
 <ul>
   <li><url>:spacy:
@@ -56,7 +56,6 @@ from pymathics.natlang.main import (
     WordData,
     WordDefinition,
     WordFrequency,
-    WordFrequencyData,
     WordList,
     WordSimilarity,
     WordStem,
@@ -87,7 +86,6 @@ __all__ = [
     "WordData",
     "WordDefinition",
     "WordFrequency",
-    "WordFrequencyData",
     "WordList",
     "WordSimilarity",
     "WordStem",
