@@ -8,7 +8,7 @@ Language translation
 """
 
 # This is under  Text Normalization in WR. But also in Natural Language Processing,
-# and Linguistic Data. I put here because is the only module tuat uses langid and pycountry
+# and Linguistic Data. I put here because is the only module that uses langid and pycountry
 # modules.
 #
 # TODO: WordTranslation, TextTranslation

@@ -253,7 +253,7 @@ class WordFrequency(_SpacyBuiltin):
 
     options = _SpacyBuiltin.options
     options.update({"IgnoreCase": "False"})
-    summary_text = "Retrieve the frequency of a word in a text"
+    summary_text = "retrieve the frequency of a word in a text"
 
     def eval(
         self, text: String, word, evaluation: Evaluation, options: dict
@@ -402,7 +402,7 @@ class WordStem(Builtin):
     _stemmer = None
 
     requires = ("nltk",)
-    summary_text = "Retrieve the stem of a word"
+    summary_text = "retrieve the stem of a word"
 
     @staticmethod
     def _get_porter_stemmer():

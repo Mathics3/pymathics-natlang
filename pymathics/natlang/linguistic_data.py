@@ -58,7 +58,7 @@ class Pluralize(Builtin):
     """
 
     requires = ("pattern",)
-    summary_text = "Retrieve the pluralized form of a word"
+    summary_text = "retrieve the pluralized form of a word"
 
     def eval(self, word, evaluation):
         "Pluralize[word_String]"
@@ -332,7 +332,7 @@ class WordList(_WordListBuiltin):
      = 9.3
     """
 
-    summary_text = "retrieve a list of common words"
+    summary_text = "list of common words"
 
     def eval(self, evaluation: Evaluation, options: dict):
         "WordList[OptionsPattern[]]"

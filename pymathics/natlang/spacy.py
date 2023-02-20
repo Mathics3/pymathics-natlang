@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
-# FIXME: split this up into smaller pieces
 
 """
 Spacy tools
 
 """
+
+# TODO: move here low-level implementation depending on spacy
+
 import heapq
 import re
 from typing import Optional

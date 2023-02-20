@@ -102,7 +102,7 @@ class TextCases(_SpacyBuiltin):
 
     """
 
-    summary_text = "List the cases of words of a certain form in a text"
+    summary_text = "list the cases of words of a certain form in a text"
 
     def eval_string_form(
         self, text: String, form, evaluation: Evaluation, options: dict
@@ -136,7 +136,7 @@ class TextPosition(_SpacyBuiltin):
      = {{1, 9}, {15, 20}}
     """
 
-    summary_text = "List the position of words of a given form in a text"
+    summary_text = "list the position of words of a given form in a text"
 
     def eval_text_form(self, text: String, form, evaluation: Evaluation, options: dict):
         "TextPosition[text_String, form_,  OptionsPattern[TextPosition]]"
@@ -215,7 +215,7 @@ class TextStructure(_SpacyBuiltin):
     """
 
     _root_pos = set(i for i, names in _pos_tags.items() if names[1])
-    summary_text = "Retrieve the grammatical structure of a text"
+    summary_text = "retrieve the grammatical structure of a text"
 
     def _to_constituent_string(self, node):
         token, children = node
