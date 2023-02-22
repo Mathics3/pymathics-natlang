@@ -2,7 +2,7 @@
 """
 Linguistic Data
 
-See <url>:WMA:https://reference.wolfram.com/language/guide/LinguisticData.html</url> guide.
+See <url>:WMA link:https://reference.wolfram.com/language/guide/LinguisticData.html</url> guide.
 
 """
 # This module uses both nltk and spacy. Maybe it makes sense to split this further.
@@ -23,6 +23,7 @@ from mathics.builtin.base import Builtin, MessageException
 # from mathics.builtin.codetables import iso639_3
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import String
+from mathics.core.element import ElementsProperties
 from mathics.core.convert.expression import Expression, to_expression
 from mathics.core.evaluation import Evaluation
 from mathics.core.list import ListExpression
@@ -39,13 +40,15 @@ from pymathics.natlang.util import (
     merge_dictionaries,
 )
 
+sort_order = "Linguistic Data"
+
 SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
 StringNotAvailable = String("NotAvailable")
 
 
 class Pluralize(Builtin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/Pluralize.html</url>
 
     <dl>
@@ -68,7 +71,7 @@ class Pluralize(Builtin):
 
 class RandomWord(_WordListBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/RandomWord.html</url>
 
     <dl>
@@ -122,7 +125,7 @@ class RandomWord(_WordListBuiltin):
 class WordData(_WordListBuiltin):
     """
 
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordData.html</url>
 
     <dl>
@@ -288,7 +291,7 @@ class WordData(_WordListBuiltin):
 
 class WordDefinition(_WordNetBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordDefinition.html</url>
 
     <dl>
@@ -317,7 +320,7 @@ class WordDefinition(_WordNetBuiltin):
 
 class WordList(_WordListBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordList.html</url>
 
     <dl>
@@ -338,7 +341,9 @@ class WordList(_WordListBuiltin):
         "WordList[OptionsPattern[]]"
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
         if words is not None:
-            return ListExpression(*(String(word) for word in words))
+            words_mathics = (String(word) for word in words)
+            result = ListExpression(*words_mathics, elements_properties=ElementsProperties(False, False, True))
+            return result
 
     def eval_type(self, wordtype, evaluation: Evaluation, options: dict):
         "WordList[wordtype_String, OptionsPattern[]]"
@@ -348,4 +353,4 @@ class WordList(_WordListBuiltin):
             evaluation,
         )
         if words is not None:
-            return ListExpression(*(String(word) for word in words))
+            return ListExpression(*(String(word) for word in words), elements_properties=ElementsProperties(False, False, True))

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Text analysis functions
+Text Analysis
 
 <url>:See WMA guide:https://reference.wolfram.com/language/guide/TextAnalysis.html</url>
 """
@@ -28,9 +28,11 @@ from pymathics.natlang.spacy import _SpacyBuiltin
 from pymathics.natlang.util import _WordListBuiltin, _WordNetBuiltin, merge_dictionaries
 
 
+sort_order = "Text Analysis"
+
 class Containing(Builtin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/Containing.html</url>
 
     <dl>
@@ -46,7 +48,7 @@ class Containing(Builtin):
 
 class DictionaryLookup(_WordListBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/DictionaryLookup.html</url>
 
     <dl>
@@ -111,7 +113,7 @@ class DictionaryLookup(_WordListBuiltin):
 
 class DictionaryWordQ(_WordNetBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/DictionaryWordQ.html</url>
 
     <dl>
@@ -144,7 +146,7 @@ class DictionaryWordQ(_WordNetBuiltin):
 
 class SpellingCorrectionList(Builtin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/SpellingCorrectionList.html</url>
 
     <dl>
@@ -204,7 +206,7 @@ class SpellingCorrectionList(Builtin):
 
 class WordCount(_SpacyBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordCount.html</url>
 
     <dl>
@@ -228,7 +230,7 @@ class WordCount(_SpacyBuiltin):
 
 class WordFrequency(_SpacyBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordFrequency.html</url>
 
     <dl>
@@ -287,7 +289,7 @@ class WordFrequency(_SpacyBuiltin):
 class WordSimilarity(_SpacyBuiltin):
     """
 
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordSimilarity.html</url>
 
     <dl>
@@ -381,7 +383,7 @@ class WordSimilarity(_SpacyBuiltin):
 
 class WordStem(Builtin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/WordStem.html</url>
 
     <dl>

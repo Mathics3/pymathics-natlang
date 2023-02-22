@@ -1,6 +1,6 @@
 """
 
-Text normalization
+Text Normalization
 
 See <url>:WMA: https://reference.wolfram.com/language/guide/TextNormalization.html</url> guide.
 
@@ -19,6 +19,7 @@ from mathics.core.list import ListExpression
 
 from pymathics.natlang.spacy import _cases, _pos_tags, _position, _SpacyBuiltin
 
+sort_order = "Text Normalization"
 
 class DeleteStopwords(_SpacyBuiltin):
     """
@@ -284,7 +285,7 @@ class TextWords(_SpacyBuiltin):
     def eval(
         self, text: String, evaluation: Evaluation, options: dict
     ) -> Optional[ListExpression]:
-        "TextWords[text_String, OptionsPattern[WordCount]]"
+        "TextWords[text_String, OptionsPattern[]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT
@@ -293,7 +294,7 @@ class TextWords(_SpacyBuiltin):
             )
 
     def eval_n(self, text: String, n: Integer, evaluation: Evaluation, options: dict):
-        "TextWords[text_String, n_Integer, OptionsPattern[TextWords]]"
+        "TextWords[text_String, n_Integer, OptionsPattern[]]"
         doc = self._nlp(text.value, evaluation, options)
         if doc:
             punctuation = spacy.parts_of_speech.PUNCT

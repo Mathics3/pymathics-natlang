@@ -2,7 +2,7 @@
 
 
 """
-Language translation
+Language Translation
 
 
 """
@@ -23,6 +23,7 @@ from mathics.core.evaluation import Evaluation
 from mathics.core.symbols import Symbol
 from mathics.core.systemsymbols import SymbolFailed
 
+sort_order = "Language Translation"
 
 class LanguageIdentify(Builtin):
     """
