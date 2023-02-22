@@ -227,8 +227,8 @@ class _WordListBuiltin(_WordNetBuiltin):
                         evaluation.message(
                             self.get_name(),
                             "wordnet",
-                            "type: %s is should be in %s"
-                            % (ilk._wordnet_type_to_pos.keys()),
+                            "type: %s should be in %s"
+                            % (ilk, _wordnet_type_to_pos.keys()),
                         )
                         return
 

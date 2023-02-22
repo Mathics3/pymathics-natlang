@@ -43,7 +43,7 @@ class Containing(Builtin):
 
     """
 
-    summary_text = "Specify a container for matching"
+    summary_text = "specify a container for matching"
 
 
 class DictionaryLookup(_WordListBuiltin):
@@ -243,11 +243,11 @@ class WordFrequency(_SpacyBuiltin):
     ## Problem with import for certain characters in the text.
     ## >> text = Import["ExampleData/EinsteinSzilLetter.txt"];
     >> text = "I have a dairy cow, it's not just any cow. \
-       She gives me milkshake, oh what a salty cow. She is the best\
-       cow in the county.";
+She gives me milkshake, oh what a salty cow. She is the best \
+cow in the county.";
 
     >> WordFrequency[text, "a" | "the"]
-     = 0.114286
+     = 0.121212
 
     >> WordFrequency["Apple Tree", "apple", IgnoreCase -> True]
      = 0.5

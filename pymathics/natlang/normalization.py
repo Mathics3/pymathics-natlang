@@ -2,7 +2,7 @@
 
 Text Normalization
 
-See <url>:WMA: https://reference.wolfram.com/language/guide/TextNormalization.html</url> guide.
+See <url>:WMA link: https://reference.wolfram.com/language/guide/TextNormalization.html</url> guide.
 
 
 This module uses spacy as a backend.
@@ -82,7 +82,7 @@ class DeleteStopwords(_SpacyBuiltin):
 
 class TextCases(_SpacyBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/TextCases.html</url>
 
     <dl>
@@ -126,7 +126,7 @@ class TextCases(_SpacyBuiltin):
 
 class TextPosition(_SpacyBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/TextPosition.html</url>
 
     <dl>
@@ -204,7 +204,7 @@ class TextSentences(_SpacyBuiltin):
 
 class TextStructure(_SpacyBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/TextStructure.html</url>
 
     <dl>
@@ -266,7 +266,7 @@ class TextStructure(_SpacyBuiltin):
 
 class TextWords(_SpacyBuiltin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/TextWords.html</url>
 
     <dl>

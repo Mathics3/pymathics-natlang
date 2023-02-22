@@ -331,13 +331,15 @@ class WordList(_WordListBuiltin):
       <dd>returns a list of common words of type $type$.
     </dl>
 
-    >> Length[WordList[]] > 10000
-     = True
+    Evaluate the average length over all the words in the dictionary:
+    >> N[Mean[StringLength /@ WordList[]], 3]
+     = 11.6
+    Now, restricted to adjetives:
     >> N[Mean[StringLength /@ WordList["Adjective"]], 2]
      = 9.3
     """
 
-    summary_text = "list of common words"
+    summary_text = "list common words"
 
     def eval(self, evaluation: Evaluation, options: dict):
         "WordList[OptionsPattern[]]"

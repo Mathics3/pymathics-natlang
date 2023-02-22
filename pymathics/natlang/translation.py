@@ -28,7 +28,7 @@ sort_order = "Language Translation"
 
 class LanguageIdentify(Builtin):
     """
-    <url>:WMA:
+    <url>:WMA link:
     https://reference.wolfram.com/language/ref/LanguageIdentify.html</url>
 
     <dl>
