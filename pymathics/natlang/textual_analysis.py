@@ -55,6 +55,7 @@ class Containing(Builtin):
      = {{19, 54}}
 
     """
+
     # This is implemented in ``pymathics.natlang.spacy._containing``
     summary_text = "specify a container for matching"
 

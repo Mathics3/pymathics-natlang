@@ -77,7 +77,9 @@ def _cases(doc, form):
             return None
 
     feeds = []
-    for i, iterator in enumerate([iter(generator(doc)) for generator in generators if generator]):
+    for i, iterator in enumerate(
+        [iter(generator(doc)) for generator in generators if generator]
+    ):
         t = try_next(iterator)
         if t:
             feeds.append((_position(t), i, t, iterator))
@@ -166,6 +168,7 @@ def _make_forms():
 
 # forms are everything one can use in TextCases[] or TextPosition[].
 _forms = _make_forms()
+
 
 def _position(t):
     if isinstance(t, Span):
