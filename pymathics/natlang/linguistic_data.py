@@ -331,6 +331,8 @@ class WordList(_WordListBuiltin):
       <dd>returns a list of common words of type $type$.
     </dl>
 
+    >> Length[WordList[]] > 10000
+     = True
     >> N[Mean[StringLength /@ WordList["Adjective"]], 2]
      = 9.3
     """
