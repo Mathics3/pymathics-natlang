@@ -40,9 +40,22 @@ class Containing(Builtin):
       <dd>represents an object of the type outer containing objects\
           of type inner.
     </dl>
+    'Containing' can be used as the second parameter in 'TextCases' and 'TextPosition'.
+    
+    Supported $outer$ strings are in {"Word", "Sentence", "Paragraph", "Line", "URL", "EmailAddress"}.
+
+    Supported $inner$ strings are in {"Person", "Company", "Quantity", "Number", "CurrencyAmount",
+    "Country", "City"}.
+    
+    The implementation of this symbol is based on `spacy`.
+
+    >> TextCases["This is a pencil. This is another pencil from England.", Containing["Sentence", "Country"]]
+     = {This is another pencil from England.}
+    >> TextPosition["This is a pencil. This is another pencil from England.", Containing["Sentence", "Country"]]
+     = {{19, 54}}
 
     """
-
+    # This is implemented in ``pymathics.natlang.spacy._containing``
     summary_text = "specify a container for matching"
 
 

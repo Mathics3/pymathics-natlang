@@ -17,7 +17,7 @@ def test_natlang():
             "WordCount",
         ),
         (
-            'Length[WordList[]]>10000',
+            "Length[WordList[]]>10000",
             "True",
             "WordList",
         ),

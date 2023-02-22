@@ -16,6 +16,7 @@ from mathics.builtin.base import Builtin
 from mathics.core.atoms import String
 from mathics.core.evaluation import Evaluation
 from mathics.core.symbols import strip_context
+from mathics.core.systemsymbols import SymbolAlternatives
 from spacy.tokens import Span
 
 no_doc = True
@@ -58,17 +59,14 @@ _pos_tags = {
 def _cases(doc, form):
     if isinstance(form, String):
         generators = [_forms.get(form.value)]
-    elif form.get_head_name() == "System`Alternatives":
+    elif form.get_head() is SymbolAlternatives:
         if not all(isinstance(f, String) for f in form.elements):
             return  # error
         generators = [_forms.get(f.value) for f in form.elements]
-    elif form.get_head_name() == "PyMathics`Containing":
-        if len(form.elements) == 2:
-            for t in _containing(doc, *form.elements):
-                yield t
-            return
-        else:
-            return  # error
+    elif form.has_form("Pymathics`Containing", 2):
+        for t in _containing(doc, *form.elements):
+            yield t
+        return
     else:
         return  # error
 
@@ -79,7 +77,7 @@ def _cases(doc, form):
             return None
 
     feeds = []
-    for i, iterator in enumerate([iter(generator(doc)) for generator in generators]):
+    for i, iterator in enumerate([iter(generator(doc)) for generator in generators if generator]):
         t = try_next(iterator)
         if t:
             feeds.append((_position(t), i, t, iterator))
@@ -168,7 +166,6 @@ def _make_forms():
 
 # forms are everything one can use in TextCases[] or TextPosition[].
 _forms = _make_forms()
-
 
 def _position(t):
     if isinstance(t, Span):
