@@ -23,8 +23,8 @@ from mathics.builtin.base import Builtin, MessageException
 # from mathics.builtin.codetables import iso639_3
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import String
-from mathics.core.element import ElementsProperties
 from mathics.core.convert.expression import Expression, to_expression
+from mathics.core.element import ElementsProperties
 from mathics.core.evaluation import Evaluation
 from mathics.core.list import ListExpression
 from mathics.core.symbols import Symbol, SymbolList
@@ -342,7 +342,10 @@ class WordList(_WordListBuiltin):
         words = self._words(self._language_name(evaluation, options), "All", evaluation)
         if words is not None:
             words_mathics = (String(word) for word in words)
-            result = ListExpression(*words_mathics, elements_properties=ElementsProperties(False, False, True))
+            result = ListExpression(
+                *words_mathics,
+                elements_properties=ElementsProperties(False, False, True)
+            )
             return result
 
     def eval_type(self, wordtype, evaluation: Evaluation, options: dict):
@@ -353,4 +356,7 @@ class WordList(_WordListBuiltin):
             evaluation,
         )
         if words is not None:
-            return ListExpression(*(String(word) for word in words), elements_properties=ElementsProperties(False, False, True))
+            return ListExpression(
+                *(String(word) for word in words),
+                elements_properties=ElementsProperties(False, False, True)
+            )

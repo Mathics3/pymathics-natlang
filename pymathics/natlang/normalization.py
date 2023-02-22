@@ -21,6 +21,7 @@ from pymathics.natlang.spacy import _cases, _pos_tags, _position, _SpacyBuiltin
 
 sort_order = "Text Normalization"
 
+
 class DeleteStopwords(_SpacyBuiltin):
     """
     Delete <url>:stop words:https://en.wikipedia.org/wiki/Stop_word</url>(\

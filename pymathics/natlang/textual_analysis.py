@@ -27,8 +27,8 @@ from mathics.eval.nevaluator import eval_N
 from pymathics.natlang.spacy import _SpacyBuiltin
 from pymathics.natlang.util import _WordListBuiltin, _WordNetBuiltin, merge_dictionaries
 
-
 sort_order = "Text Analysis"
+
 
 class Containing(Builtin):
     """
