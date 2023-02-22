@@ -279,6 +279,10 @@ class TextWords(_SpacyBuiltin):
 
     >> TextWords["Hickory, dickory, dock! The mouse ran up the clock."]
      = {Hickory, dickory, dock, The, mouse, ran, up, the, clock}
+
+    >> TextWords["Bruder Jakob, Schläfst du noch?", 2]
+     = {Bruder, Jakob}
+
     """
 
     summary_text = "list the words in a string"

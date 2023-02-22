@@ -59,8 +59,11 @@ class DictionaryLookup(_WordListBuiltin):
       <dd>lookup first $n$ words that match the given $word$ or pattern.
     </dl>
 
-    >> DictionaryLookup["bake" ~~ ___, 3]
-     = {bake, bakeapple, baked}
+    >> DictionaryLookup["baker" ~~ ___]
+     = {baker, baker's dozen, baker's eczema, baker's yeast, bakersfield, bakery}
+
+    >> DictionaryLookup["baker" ~~ ___, 3]
+     = {baker, baker's dozen, baker's eczema}
     """
 
     summary_text = "Lookup words matching a pattern in a dictionary"
