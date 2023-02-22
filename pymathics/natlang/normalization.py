@@ -47,7 +47,7 @@ class DeleteStopwords(_SpacyBuiltin):
      = Old Man Apulia, conduct peculiar
     """
 
-    summary_text = "Remove stopwords from a text"
+    summary_text = "remove stopwords from a text"
 
     def eval_list(self, li, evaluation: Evaluation, options: dict) -> ListExpression:
         "DeleteStopwords[li_List, OptionsPattern[DeleteStopwords]]"
@@ -104,7 +104,7 @@ class TextCases(_SpacyBuiltin):
 
     """
 
-    summary_text = "list the cases of words of a certain form in a text"
+    summary_text = "list cases of words of a certain form in a text"
 
     def eval_string_form(
         self, text: String, form, evaluation: Evaluation, options: dict
@@ -138,7 +138,7 @@ class TextPosition(_SpacyBuiltin):
      = {{1, 9}, {15, 20}}
     """
 
-    summary_text = "list the position of words of a given form in a text"
+    summary_text = "list the positions of words of a given form in a text"
 
     def eval_text_form(self, text: String, form, evaluation: Evaluation, options: dict):
         "TextPosition[text_String, form_,  OptionsPattern[TextPosition]]"
