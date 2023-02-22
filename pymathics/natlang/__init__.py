@@ -39,12 +39,14 @@ Examples:
 """
 
 from pymathics.natlang.linguistic_data import (
-    Pluralize,
+    DictionaryLookup,
+    DictionaryWordQ,
     RandomWord,
     WordData,
     WordDefinition,
     WordList,
 )
+from pymathics.natlang.manipulate import Pluralize
 from pymathics.natlang.normalization import (
     DeleteStopwords,
     TextCases,
@@ -55,8 +57,6 @@ from pymathics.natlang.normalization import (
 )
 from pymathics.natlang.textual_analysis import (
     Containing,
-    DictionaryLookup,
-    DictionaryWordQ,
     SpellingCorrectionList,
     WordCount,
     WordFrequency,

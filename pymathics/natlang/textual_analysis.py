@@ -7,25 +7,21 @@ Text Analysis
 
 # This module uses both enchant, nltk and spacy. Maybe we want to split this further.
 
-import re
-from itertools import islice
 from typing import Optional
 
 import enchant
 import nltk
 import spacy
-from mathics.builtin.atomic.strings import anchor_pattern, to_regex
 from mathics.builtin.base import Builtin
 from mathics.core.atoms import Integer, Real, String
 from mathics.core.evaluation import Evaluation
 from mathics.core.expression import Expression
 from mathics.core.list import ListExpression
-from mathics.core.symbols import SymbolFalse, SymbolList, SymbolTrue
-from mathics.core.systemsymbols import SymbolStringExpression
+from mathics.core.symbols import SymbolList, SymbolTrue
 from mathics.eval.nevaluator import eval_N
 
 from pymathics.natlang.spacy import _SpacyBuiltin
-from pymathics.natlang.util import _WordListBuiltin, _WordNetBuiltin, merge_dictionaries
+from pymathics.natlang.util import merge_dictionaries
 
 sort_order = "Text Analysis"
 
@@ -41,12 +37,12 @@ class Containing(Builtin):
           of type inner.
     </dl>
     'Containing' can be used as the second parameter in 'TextCases' and 'TextPosition'.
-    
+
     Supported $outer$ strings are in {"Word", "Sentence", "Paragraph", "Line", "URL", "EmailAddress"}.
 
     Supported $inner$ strings are in {"Person", "Company", "Quantity", "Number", "CurrencyAmount",
     "Country", "City"}.
-    
+
     The implementation of this symbol is based on `spacy`.
 
     >> TextCases["This is a pencil. This is another pencil from England.", Containing["Sentence", "Country"]]
@@ -58,107 +54,6 @@ class Containing(Builtin):
 
     # This is implemented in ``pymathics.natlang.spacy._containing``
     summary_text = "specify a container for matching"
-
-
-class DictionaryLookup(_WordListBuiltin):
-    """
-    <url>:WMA link:
-    https://reference.wolfram.com/language/ref/DictionaryLookup.html</url>
-
-    <dl>
-      <dt>'DictionaryLookup[$word$]'
-      <dd>lookup words that match the given $word$ or pattern.
-
-      <dt>'DictionaryLookup[$word$, $n$]'
-      <dd>lookup first $n$ words that match the given $word$ or pattern.
-    </dl>
-
-    >> DictionaryLookup["baker" ~~ ___]
-     = {baker, baker's dozen, baker's eczema, baker's yeast, bakersfield, bakery}
-
-    >> DictionaryLookup["baker" ~~ ___, 3]
-     = {baker, baker's dozen, baker's eczema}
-    """
-
-    summary_text = "Lookup words matching a pattern in a dictionary"
-
-    def compile(self, pattern, evaluation):
-        re_patt = to_regex(pattern, evaluation)
-        if re_patt is None:
-            evaluation.message(
-                "StringExpression",
-                "invld",
-                pattern,
-                Expression(SymbolStringExpression, pattern),
-            )
-            return
-        re_patt = anchor_pattern(re_patt)
-
-        return re.compile(re_patt, flags=re.IGNORECASE)
-
-    def search(self, dictionary_words, pattern):
-        for dictionary_word in dictionary_words:
-            if pattern.match(dictionary_word):
-                yield dictionary_word.replace("_", " ")
-
-    def lookup(self, language_name, word, n, evaluation):
-        pattern = self.compile(word, evaluation)
-        if pattern:
-            dictionary_words = self._words(language_name, "All", evaluation)
-            if dictionary_words is not None:
-                matches = self.search(dictionary_words, pattern)
-                if n is not None:
-                    matches = islice(matches, 0, n)
-                return ListExpression(*(String(match) for match in sorted(matches)))
-
-    def eval_english(self, word, evaluation):
-        "DictionaryLookup[word_]"
-        return self.lookup(String("English"), word, None, evaluation)
-
-    def eval_language(self, language, word, evaluation):
-        "DictionaryLookup[{language_String, word_}]"
-        return self.lookup(language, word, None, evaluation)
-
-    def eval_english_n(self, word, n, evaluation):
-        "DictionaryLookup[word_, n_Integer]"
-        return self.lookup(String("English"), word, n.value, evaluation)
-
-    def eval_language_n(self, language, word, n, evaluation):
-        "DictionaryLookup[{language_String, word_}, n_Integer]"
-        return self.lookup(language, word, n.value, evaluation)
-
-
-class DictionaryWordQ(_WordNetBuiltin):
-    """
-    <url>:WMA link:
-    https://reference.wolfram.com/language/ref/DictionaryWordQ.html</url>
-
-    <dl>
-      <dt>'DictionaryWordQ[$word$]'
-      <dd>returns True if $word$ is a word usually found in dictionaries, and False otherwise.
-    </dl>
-
-    >> DictionaryWordQ["couch"]
-     = True
-
-    >> DictionaryWordQ["meep-meep"]
-     = False
-    """
-
-    summary_text = "Check if a word is in the dictionary"
-
-    def eval(self, word, evaluation: Evaluation, options: dict):
-        "DictionaryWordQ[word_String,  OptionsPattern[DictionaryWordQ]]"
-        if not isinstance(word, String):
-            return False
-        wordnet, language_code = self._load_wordnet(
-            evaluation, self._language_name(evaluation, options)
-        )
-        if wordnet:
-            if list(wordnet.synsets(word.value.lower(), None, language_code)):
-                return SymbolTrue
-            else:
-                return SymbolFalse
 
 
 class SpellingCorrectionList(Builtin):

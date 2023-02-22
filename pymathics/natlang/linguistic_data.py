@@ -5,7 +5,7 @@ Linguistic Data
 See <url>:WMA link:https://reference.wolfram.com/language/guide/LinguisticData.html</url> guide.
 
 """
-# This module uses both nltk and spacy. Maybe it makes sense to split this further.
+# This module uses nltk.
 
 
 # TODO: Complete me
@@ -16,29 +16,29 @@ See <url>:WMA link:https://reference.wolfram.com/language/guide/LinguisticData.h
 # PartOfSpeech — possible parts of speech for a word
 
 
+import re
+from itertools import islice
 from typing import Optional
 
-from mathics.builtin.base import Builtin, MessageException
-
-# from mathics.builtin.codetables import iso639_3
+from mathics.builtin.atomic.strings import anchor_pattern, to_regex
+from mathics.builtin.base import MessageException
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import String
 from mathics.core.convert.expression import Expression, to_expression
 from mathics.core.element import ElementsProperties
 from mathics.core.evaluation import Evaluation
 from mathics.core.list import ListExpression
-from mathics.core.symbols import Symbol, SymbolList
+from mathics.core.symbols import Symbol, SymbolFalse, SymbolList, SymbolTrue
 from mathics.core.systemsymbols import SymbolMissing, SymbolRule, SymbolStringExpression
-from pattern.en import pluralize
 
-from pymathics.natlang.textual_analysis import WordStem
-from pymathics.natlang.util import (
+from pymathics.natlang.nltk import (
     WordProperty,
     _WordListBuiltin,
     _wordnet_pos_to_type,
     _WordNetBuiltin,
-    merge_dictionaries,
 )
+from pymathics.natlang.textual_analysis import WordStem
+from pymathics.natlang.util import merge_dictionaries
 
 sort_order = "Linguistic Data"
 
@@ -46,27 +46,105 @@ SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
 StringNotAvailable = String("NotAvailable")
 
 
-class Pluralize(Builtin):
+class DictionaryLookup(_WordListBuiltin):
     """
     <url>:WMA link:
-    https://reference.wolfram.com/language/ref/Pluralize.html</url>
+    https://reference.wolfram.com/language/ref/DictionaryLookup.html</url>
 
     <dl>
-      <dt>'Pluralize[$word$]'
-      <dd>returns the plural form of $word$.
+      <dt>'DictionaryLookup[$word$]'
+      <dd>lookup words that match the given $word$ or pattern.
+
+      <dt>'DictionaryLookup[$word$, $n$]'
+      <dd>lookup first $n$ words that match the given $word$ or pattern.
     </dl>
 
-    >> Pluralize["potato"]
-     = potatoes
+    >> DictionaryLookup["baker" ~~ ___]
+     = {baker, baker's dozen, baker's eczema, baker's yeast, bakersfield, bakery}
+
+    >> DictionaryLookup["baker" ~~ ___, 3]
+     = {baker, baker's dozen, baker's eczema}
     """
 
-    requires = ("pattern",)
-    summary_text = "retrieve the pluralized form of a word"
+    summary_text = "Lookup words matching a pattern in a dictionary"
 
-    def eval(self, word, evaluation):
-        "Pluralize[word_String]"
+    def compile(self, pattern, evaluation):
+        re_patt = to_regex(pattern, evaluation)
+        if re_patt is None:
+            evaluation.message(
+                "StringExpression",
+                "invld",
+                pattern,
+                Expression(SymbolStringExpression, pattern),
+            )
+            return
+        re_patt = anchor_pattern(re_patt)
 
-        return String(pluralize(word.value))
+        return re.compile(re_patt, flags=re.IGNORECASE)
+
+    def search(self, dictionary_words, pattern):
+        for dictionary_word in dictionary_words:
+            if pattern.match(dictionary_word):
+                yield dictionary_word.replace("_", " ")
+
+    def lookup(self, language_name, word, n, evaluation):
+        pattern = self.compile(word, evaluation)
+        if pattern:
+            dictionary_words = self._words(language_name, "All", evaluation)
+            if dictionary_words is not None:
+                matches = self.search(dictionary_words, pattern)
+                if n is not None:
+                    matches = islice(matches, 0, n)
+                return ListExpression(*(String(match) for match in sorted(matches)))
+
+    def eval_english(self, word, evaluation):
+        "DictionaryLookup[word_]"
+        return self.lookup(String("English"), word, None, evaluation)
+
+    def eval_language(self, language, word, evaluation):
+        "DictionaryLookup[{language_String, word_}]"
+        return self.lookup(language, word, None, evaluation)
+
+    def eval_english_n(self, word, n, evaluation):
+        "DictionaryLookup[word_, n_Integer]"
+        return self.lookup(String("English"), word, n.value, evaluation)
+
+    def eval_language_n(self, language, word, n, evaluation):
+        "DictionaryLookup[{language_String, word_}, n_Integer]"
+        return self.lookup(language, word, n.value, evaluation)
+
+
+class DictionaryWordQ(_WordNetBuiltin):
+    """
+    <url>:WMA link:
+    https://reference.wolfram.com/language/ref/DictionaryWordQ.html</url>
+
+    <dl>
+      <dt>'DictionaryWordQ[$word$]'
+      <dd>returns True if $word$ is a word usually found in dictionaries, and False otherwise.
+    </dl>
+
+    >> DictionaryWordQ["couch"]
+     = True
+
+    >> DictionaryWordQ["meep-meep"]
+     = False
+    """
+
+    summary_text = "Check if a word is in the dictionary"
+
+    def eval(self, word, evaluation: Evaluation, options: dict):
+        "DictionaryWordQ[word_String,  OptionsPattern[DictionaryWordQ]]"
+        if not isinstance(word, String):
+            return False
+        wordnet, language_code = self._load_wordnet(
+            evaluation, self._language_name(evaluation, options)
+        )
+        if wordnet:
+            if list(wordnet.synsets(word.value.lower(), None, language_code)):
+                return SymbolTrue
+            else:
+                return SymbolFalse
 
 
 class RandomWord(_WordListBuiltin):
