@@ -2,7 +2,8 @@
 """
 Text Analysis
 
-<url>:See WMA guide:https://reference.wolfram.com/language/guide/TextAnalysis.html</url>
+See the corresponding <url>:WMA:
+https://reference.wolfram.com/language/guide/TextAnalysis.html</url> guide.
 """
 
 # This module uses both enchant, nltk and spacy. Maybe we want to split this further.
@@ -88,7 +89,7 @@ class SpellingCorrectionList(Builtin):
 
     _dictionaries = {}
 
-    summary_text = "Look for spelling correction candidates of a word"
+    summary_text = "look for spelling correction candidates of a word"
 
     def eval(
         self, word: String, evaluation: Evaluation, options: dict
@@ -130,7 +131,7 @@ class WordCount(_SpacyBuiltin):
      = 4
     """
 
-    summary_text = "Count the words in a text"
+    summary_text = "count words in a text"
 
     def eval(self, text, evaluation: Evaluation, options: dict):
         "WordCount[text_String, OptionsPattern[WordCount]]"
@@ -154,9 +155,7 @@ class WordFrequency(_SpacyBuiltin):
 
     ## Problem with import for certain characters in the text.
     ## >> text = Import["ExampleData/EinsteinSzilLetter.txt"];
-    >> text = "I have a dairy cow, it's not just any cow. \
-She gives me milkshake, oh what a salty cow. She is the best \
-cow in the county.";
+    >> text = "I have a dairy cow, it's not just any cow. She gives me milkshake, oh what a salty cow. She is the best cow in the county.";
 
     >> WordFrequency[text, "a" | "the"]
      = 0.121212
@@ -232,7 +231,7 @@ class WordSimilarity(_SpacyBuiltin):
             "idxfmt": "Indices must be integers or lists of integers of the same length.",
         },
     )
-    summary_text = "Measure the similarity of two texts"
+    summary_text = "measure similarity of two texts"
 
     def eval(
         self, text1: String, text2: String, evaluation: Evaluation, options: dict

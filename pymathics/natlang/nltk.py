@@ -13,6 +13,7 @@ from mathics.core.atoms import String
 from mathics.core.evaluation import Evaluation
 from mathics.core.symbols import strip_context
 
+# Don't consider this for user documentation
 no_doc = True
 
 

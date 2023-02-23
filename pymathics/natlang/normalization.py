@@ -2,7 +2,9 @@
 
 Text Normalization
 
-See <url>:WMA link: https://reference.wolfram.com/language/guide/TextNormalization.html</url> guide.
+See the corresponding <url>
+:WMA:
+https://reference.wolfram.com/language/guide/TextNormalization.html</url> guide.
 
 
 This module uses spacy as a backend.
