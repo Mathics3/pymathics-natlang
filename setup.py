@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys
-import platform
 import os
 import os.path as osp
-from setuptools import setup, find_namespace_packages
+import platform
+import sys
+
+from setuptools import find_namespace_packages, setup
 
 # Ensure user has the correct Python version
 if sys.version_info < (3, 6):

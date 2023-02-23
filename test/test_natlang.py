@@ -17,6 +17,11 @@ def test_natlang():
             "WordCount",
         ),
         (
+            "Length[WordList[]]>10000",
+            "True",
+            "WordList",
+        ),
+        (
             'TextWords["Hickory, dickory, dock! The mouse ran up the clock."]',
             '{"Hickory", "dickory", "dock", "The", "mouse", "ran", "up", "the", "clock"}',
             "TextWords",

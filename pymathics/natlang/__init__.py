@@ -38,28 +38,32 @@ Examples:
      = Old Man Apulia, conduct peculiar
 """
 
-
-from pymathics.natlang.main import (
-    DeleteStopwords,
+from pymathics.natlang.linguistic_data import (
     DictionaryLookup,
     DictionaryWordQ,
-    LanguageIdentify,
-    Pluralize,
     RandomWord,
-    SpellingCorrectionList,
+    WordData,
+    WordDefinition,
+    WordList,
+)
+from pymathics.natlang.manipulate import Pluralize
+from pymathics.natlang.normalization import (
+    DeleteStopwords,
     TextCases,
     TextPosition,
     TextSentences,
     TextStructure,
     TextWords,
+)
+from pymathics.natlang.textual_analysis import (
+    Containing,
+    SpellingCorrectionList,
     WordCount,
-    WordData,
-    WordDefinition,
     WordFrequency,
-    WordList,
     WordSimilarity,
     WordStem,
 )
+from pymathics.natlang.translation import LanguageIdentify
 from pymathics.natlang.version import __version__
 
 pymathics_version_data = {
@@ -70,6 +74,7 @@ pymathics_version_data = {
 }
 
 __all__ = [
+    "Containing",
     "DeleteStopwords",
     "DictionaryLookup",
     "DictionaryWordQ",
