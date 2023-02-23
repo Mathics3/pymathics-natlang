@@ -2,7 +2,7 @@
 """
 Linguistic Data
 
-See <url>:WMA link:https://reference.wolfram.com/language/guide/LinguisticData.html</url> guide.
+See the corresponding <url>:WMA:https://reference.wolfram.com/language/guide/LinguisticData.html</url> guide.
 
 """
 # This module uses nltk.
@@ -66,7 +66,7 @@ class DictionaryLookup(_WordListBuiltin):
      = {baker, baker's dozen, baker's eczema}
     """
 
-    summary_text = "Lookup words matching a pattern in a dictionary"
+    summary_text = "lookup words matching a pattern in our word dictionary"
 
     def compile(self, pattern, evaluation):
         re_patt = to_regex(pattern, evaluation)
@@ -131,7 +131,7 @@ class DictionaryWordQ(_WordNetBuiltin):
      = False
     """
 
-    summary_text = "Check if a word is in the dictionary"
+    summary_text = "check if a word is in our word dictionary"
 
     def eval(self, word, evaluation: Evaluation, options: dict):
         "DictionaryWordQ[word_String,  OptionsPattern[DictionaryWordQ]]"
@@ -170,7 +170,7 @@ class RandomWord(_WordListBuiltin):
     </dl>
     """
 
-    summary_text = "generate a random word of a given kind"
+    summary_text = "generate a random word"
 
     def _random_words(self, type, n, evaluation: Evaluation, options: dict):
         words = self._words(self._language_name(evaluation, options), type, evaluation)
@@ -412,7 +412,7 @@ class WordList(_WordListBuiltin):
     Evaluate the average length over all the words in the dictionary:
     >> N[Mean[StringLength /@ WordList[]], 3]
      = 11.6
-    Now, restricted to adjetives:
+    Now, restricted to adjectives:
     >> N[Mean[StringLength /@ WordList["Adjective"]], 2]
      = 9.3
     """
