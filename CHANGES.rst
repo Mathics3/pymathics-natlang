@@ -1,6 +1,24 @@
 CHANGES
 =======
 
+6.0.0
+-----
+
+Revise for 6.0.0 Mathics3 API and current Mathics3 builtin standards described in `Guidelines for Writing
+Documentation <https://mathics-development-guide.readthedocs.io/en/latest/extending/developing-code/extending/documentation-markup.html#guidelines-for-writing-documentation>`_.
+
+This package has undergone a major overhaul. Modules have been split out along into logical groups following the documentation structure.
+
+We have gradually been rolling in more Python type annotations and have been using current Python practices. Tools such as using ``isort``, ``black`` and ``flake8`` are used as well.
+
+Evaluation methods of built-in functions start ``eval_`` not
+``apply_``.
+
+There is more refactoring more to do here, bugs that remain, functions needing adding or filling out.
+
+We should assess the landscape for changes in modules that might be used here; there is probably something better maintained than ``langid``.
+
+
 5.0.0
 -----
 
