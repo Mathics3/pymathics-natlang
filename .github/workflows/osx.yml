@@ -34,7 +34,7 @@ jobs:
         # Can remove after next Mathics-core release
         # python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
         # (cd src/mathics3 && bash ./admin-tools/make-op-tables.sh)
-        python -m pip install Mathics3
+        python -m pip install Mathics3[full]
 
     - name: Install pymathics.natlang
       run: |
