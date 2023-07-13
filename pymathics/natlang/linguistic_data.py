@@ -161,13 +161,13 @@ class RandomWord(_WordListBuiltin):
 
       <dt>'RandomWord[$type$, $n$]'
       <dd>returns $n$ random words of the given $type$.
+    </dl>
 
     >> RandomWord["Noun"]
      = ...
     >> RandomWord["Noun", 3]
      = {..., ..., ...}
 
-    </dl>
     """
 
     summary_text = "generate a random word"
