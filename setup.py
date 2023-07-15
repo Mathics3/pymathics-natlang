@@ -94,5 +94,5 @@ setup(
     # TODO: could also include long_description, download_url,
 )
 
-os.system("%s -m nltk.downloader 'en_core_web_md wordnet2022 omw" % sys.executable)
 os.system("%s -m spacy download %s" % (sys.executable, lang))
+os.system("%s -m nltk.downloader 'wordnet2022 omw" % sys.executable)

@@ -36,9 +36,7 @@ jobs:
         # python -m pip install Mathics3[full]
     - name: Install pymathics.natlang
       run: |
-        pip install -e .
-        python -m nltk.downloader en_core_web_md wordnet2022 omw
-        # make develop
+        make develop
     - name: Test natlang
       run: |
         make check
