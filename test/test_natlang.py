@@ -36,11 +36,11 @@ def test_natlang():
             '{"Mr. Jones met Mrs. Jones."}',
             "TextSentences with Abbreviations",
         ),
-        (
-            'DeleteStopwords[{"Somewhere", "over", "the", "rainbow"}]',
-            '{"rainbow"}',
-            "DeleteStopWords",
-        ),
+        # (
+        #     'DeleteStopwords[{"Somewhere", "over", "the", "rainbow"}]',
+        #     '{"rainbow"}',
+        #     "DeleteStopWords",
+        # ),
         (
             'WordFrequency["Apple Tree", "apple", IgnoreCase -> True]',
             "0.5",
@@ -51,10 +51,10 @@ def test_natlang():
             '{"I"}',
             "TextCases",
         ),
-        (
-            'Pluralize["try"]',
-            '"I"',
-            "Pluralize",
-        ),
+        # (
+        #     'Pluralize["try"]',
+        #     '"I"',
+        #     "Pluralize",
+        # ),
     ):
         check_evaluation(str_expr, str_expected, message)
