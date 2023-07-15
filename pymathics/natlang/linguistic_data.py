@@ -69,7 +69,7 @@ class DictionaryLookup(_WordListBuiltin):
     summary_text = "lookup words matching a pattern in our word dictionary"
 
     def compile(self, pattern, evaluation):
-        re_patt = to_regex(pattern, evaluation)
+        re_patt = to_regex(pattern, show_message=evaluation.message)
         if re_patt is None:
             evaluation.message(
                 "StringExpression",
