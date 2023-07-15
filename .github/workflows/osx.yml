@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
+    branches: '**'
 
 jobs:
   build:
@@ -19,26 +19,26 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install dependencies
+    - name: Install OS dependencies
       run: |
-        brew install llvm@11 enchant
+        brew install llvm@11 tesseract enchant mysql
         python -m pip install --upgrade pip
         LLVM_CONFIG=/usr/local/Cellar/llvm@11/11.1.0/bin/llvm-config pip install llvmlite
-        brew install mariadb
         pip install pytest
         # Can comment out when next Mathics core and Mathics-scanner are released
         # python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
         # Can remove after next Mathics-core release
-        # python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
-        # (cd src/mathics3 && bash ./admin-tools/make-op-tables.sh)
-        python -m pip install Mathics3[full]
-
+        python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
+        (cd src/mathics3 && bash ./admin-tools/make-op-tables.sh)
+        # python -m pip install Mathics3[full]
     - name: Install pymathics.natlang
       run: |
         pip install -e .
+        python -m nltk.downloader en_core_web_md wordnet2022 omw
+        # make develop
     - name: Test natlang
       run: |
         make check
