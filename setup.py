@@ -9,8 +9,8 @@ import sys
 from setuptools import find_namespace_packages, setup
 
 # Ensure user has the correct Python version
-if sys.version_info < (3, 6):
-    print("Mathics support Python 3.6 and above; you have %d.%d" % sys.version_info[:2])
+if sys.version_info < (3, 7):
+    print("Mathics support Python 3.7 and above; you have %d.%d" % sys.version_info[:2])
     sys.exit(-1)
 
 
@@ -53,7 +53,7 @@ setup(
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
     install_requires=[
-        "Mathics3 >=6.0.0,<7.1.0",
+        "Mathics3 >=6.1.0,<7.1.0",
         "click>=8.0",
         "joblib>=1.0.1",
         "langid",  # replace with a supported newer package, e.g. via spacy
@@ -76,11 +76,11 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: Implementation :: CPython",
         "Programming Language :: Python :: Implementation :: PyPy",
         "Topic :: Scientific/Engineering",
