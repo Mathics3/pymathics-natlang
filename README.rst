@@ -1,6 +1,6 @@
 |Pypi Installs| |Latest Version| |Supported Python Versions|
 
-Mathics Natural Language Toolkit module.
+Mathics3 Natural Language Toolkit module.
 
 
 Example Session
