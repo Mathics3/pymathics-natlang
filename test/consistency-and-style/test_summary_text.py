@@ -5,8 +5,9 @@ import os.path as osp
 import pkgutil
 
 import pytest
-from mathics.builtin.base import Builtin
+
 from mathics.core.load_builtin import name_is_builtin_symbol
+from mathics.core.builtin import Builtin
 from mathics.doc.common_doc import skip_doc
 
 from pymathics.natlang import __file__ as module_initfile_path

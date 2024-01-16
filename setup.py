@@ -53,7 +53,7 @@ setup(
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
     install_requires=[
-        "Mathics3 >=6.1.0,<7.1.0",
+        "Mathics3>=7.0.0.dev0",
         "click>=8.0",
         "joblib>=1.0.1",
         "langid",  # replace with a supported newer package, e.g. via spacy

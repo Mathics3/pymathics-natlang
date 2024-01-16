@@ -5,8 +5,9 @@ Word manipulation
 This module uses pattern.en to change the form of a word.
 
 """
-from mathics.builtin.base import Builtin
+
 from mathics.core.atoms import String
+from mathics.core.builtin import Builtin
 from mathics.core.evaluation import Evaluation
 from pattern.en import pluralize
 

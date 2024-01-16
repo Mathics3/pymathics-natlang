@@ -17,8 +17,8 @@ from typing import Union
 
 import langid  # see https://github.com/saffsd/langid.py
 import pycountry
-from mathics.builtin.base import Builtin
 from mathics.core.atoms import String
+from mathics.core.builtin import Builtin
 from mathics.core.evaluation import Evaluation
 from mathics.core.symbols import Symbol
 from mathics.core.systemsymbols import SymbolFailed

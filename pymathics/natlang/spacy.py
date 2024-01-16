@@ -12,8 +12,9 @@ import re
 from typing import Optional
 
 import spacy
-from mathics.builtin.base import Builtin
+
 from mathics.core.atoms import String
+from mathics.core.builtin import Builtin
 from mathics.core.evaluation import Evaluation
 from mathics.core.symbols import strip_context
 from mathics.core.systemsymbols import SymbolAlternatives

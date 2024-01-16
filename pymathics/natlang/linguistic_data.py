@@ -21,9 +21,9 @@ from itertools import islice
 from typing import Optional
 
 from mathics.builtin.atomic.strings import anchor_pattern, to_regex
-from mathics.builtin.base import MessageException
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import String
+from mathics.core.builtin import MessageException
 from mathics.core.convert.expression import Expression, to_expression
 from mathics.core.element import ElementsProperties
 from mathics.core.evaluation import Evaluation
