@@ -26,8 +26,8 @@ jobs:
       run: |
         brew install llvm tesseract enchant mysql
         python -m pip install --upgrade pip
-        ls /usr/local/Cellar/
-        LLVM_CONFIG=/usr/local/Cellar/llvm@11/11.1.0/bin/llvm-config pip install llvmlite
+        # LLVM_CONFIG=/usr/local/Cellar/llvm@11/11.1.0/bin/llvm-config pip install llvmlite
+        pip install llvmlite
         pip install pytest
         # Can comment out when next Mathics core and Mathics-scanner are released
         # python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
