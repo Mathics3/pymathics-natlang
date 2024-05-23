@@ -16,7 +16,7 @@ Example Session
    In[3]= WordFrequency["Apple Tree and apple", "apple", IgnoreCase -> True]
    Out[3]= 0.5
    In[4] = TextCases["I was in London last year.", "Pronoun"]
-   Out[3]= {I}
+   Out[4]= {I}
 
 More examples can be found in the `test file <https://github.com/Mathics3/pymathics-natlang/blob/master/test/test_natlang.py>`_.
 
