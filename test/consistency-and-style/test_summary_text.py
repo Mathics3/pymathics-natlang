@@ -6,11 +6,11 @@ import pkgutil
 
 import pytest
 
-from mathics.core.load_builtin import name_is_builtin_symbol
-from mathics.core.builtin import Builtin
-from mathics.doc.common_doc import skip_doc
+from pymathics.graph import __file__ as module_initfile_path
 
-from pymathics.natlang import __file__ as module_initfile_path
+from mathics.core.builtin import Builtin
+from mathics.core.load_builtin import name_is_builtin_symbol
+from mathics.doc.gather import skip_doc
 
 # Get file system path name for mathics.builtin
 module_path = osp.dirname(module_initfile_path)

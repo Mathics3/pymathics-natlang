@@ -9,8 +9,8 @@ import sys
 from setuptools import find_namespace_packages, setup
 
 # Ensure user has the correct Python version
-if sys.version_info < (3, 7):
-    print("Mathics support Python 3.7 and above; you have %d.%d" % sys.version_info[:2])
+if sys.version_info < (3, 8):
+    print("Mathics support Python 3.8 and above; you have %d.%d" % sys.version_info[:2])
     sys.exit(-1)
 
 
@@ -76,7 +76,6 @@ setup(
         "Intended Audience :: Science/Research",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3.10",
