@@ -6,7 +6,9 @@ import pkgutil
 
 import pytest
 
-from pymathics.graph import __file__ as module_initfile_path
+from mathics.core.load_builtin import name_is_builtin_symbol
+from mathics.core.builtin import Builtin
+from mathics.doc.gather import skip_doc
 
 from mathics.core.builtin import Builtin
 from mathics.core.load_builtin import name_is_builtin_symbol
