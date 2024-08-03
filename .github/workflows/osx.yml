@@ -24,6 +24,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install OS dependencies
       run: |
+        brew update
         brew install llvm tesseract enchant mysql
         python -m pip install --upgrade pip
         # LLVM_CONFIG=/usr/local/Cellar/llvm@11/11.1.0/bin/llvm-config pip install llvmlite
