@@ -55,6 +55,7 @@ setup(
     install_requires=[
         "Mathics3>=7.0.0.dev0",
         "click>=8.0",
+        "enchant",
         "joblib>=1.0.1",
         "langid",  # replace with a supported newer package, e.g. via spacy
         "llvmlite>=0.36",
