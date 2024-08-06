@@ -49,7 +49,7 @@ SPACY_DOWNLOAD = os.environ.get("SPACY_DOWNLOAD", "%s" % (lang,))
 # consider using langid3 and pyenchant
 
 setup(
-    name="pymathics-natlang",
+    name="mathics-natlang",
     version=__version__,
     packages=find_namespace_packages(include=["pymathics.*"]),
     install_requires=[
