@@ -8,15 +8,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         # python-version: ['3.9', '3.10'] # Figure out what's wrong here.
         python-version: ['3.11']
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
@@ -26,9 +26,9 @@ jobs:
         # Can comment out when next Mathics3 core and Mathics-scanner are released
         # python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
         # python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
-        git clone --branch fixes_for_the_new_module_organization https://github.com/Mathics3/mathics-core
+        git clone https://github.com/Mathics3/mathics-core
         (cd mathics-core && pip3 install -e .[full])
-        (cd mathics-core && bash ./admin-tools/make-op-tables.sh) 
+        (cd mathics-core && bash ./admin-tools/make-op-tables.sh)
         # python -m pip install Mathics3[full]
     - name: install pymathics natlang
       run: |
