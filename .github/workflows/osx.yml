@@ -40,4 +40,4 @@ jobs:
         make develop
     - name: Test natlang
       run: |
-        PYENCHANT_LIBRARY_PATH=$(brew --prefix enchant)/lib/libenchant-2.dylib python) make check
+        make check
