@@ -38,6 +38,7 @@ class Containing(Builtin):
       <dd>represents an object of the type outer containing objects\
           of type inner.
     </dl>
+
     'Containing' can be used as the second parameter in 'TextCases' and 'TextPosition'.
 
     Supported $outer$ strings are in {"Word", "Sentence", "Paragraph", "Line", "URL", "EmailAddress"}.
