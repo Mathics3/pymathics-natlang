@@ -10,6 +10,7 @@ jobs:
   build:
     env:
       LDFLAGS: "-L/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib -lunwind"
+      CPPFLAGS; "-I/opt/homebrew/opt/llvm/include"
     runs-on: macos-latest
     strategy:
       matrix:
@@ -23,14 +24,11 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install OS dependencies
       run: |
-        brew update
-        brew install enchant
         brew install llvm tesseract enchant mysql
         python -m pip install --upgrade pip
         pip install pytest pyenchant
         PYENCHANT_VERBOSE_FIND=1 python -c 'import enchant'
 
-        # LLVM_CONFIG=/usr/local/Cellar/llvm@18/18.1.8/bin/llvm-config pip install llvmlite
         # Can comment out when next Mathics core and Mathics-scanner are released
         # python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
         # Can remove after next Mathics-core release
