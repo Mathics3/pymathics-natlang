@@ -1,10 +1,16 @@
 CHANGES
 =======
 
+7.0.0
+-----
+
+* Revise for 7.0.0 Mathics3 API; we need to explicilty load builtins
+
+
 6.0.0
 -----
 
-Revise for 6.0.0 Mathics3 API and current Mathics3 builtin standards described in `Guidelines for Writing
+Revise for 6.0.0 Mathics3 APIs and current Mathics3 builtin standards described in `Guidelines for Writing
 Documentation <https://mathics-development-guide.readthedocs.io/en/latest/extending/developing-code/extending/documentation-markup.html#guidelines-for-writing-documentation>`_.
 
 This package has undergone a major overhaul. Modules have been split out along into logical groups following the documentation structure.
