@@ -1,0 +1,72 @@
+--- ChangeLog	2024-08-11 09:56:49.699104043 -0400
++++ ChangeLog-spell-corrected	2024-08-11 09:56:29.505207062 -0400
+@@ -7,8 +7,8 @@
+ 
+ 2024-08-11  R. Bernstein <rocky@users.noreply.github.com>
+ 
+-	* .github/workflows/{osx.yml => osx.yml-needs-enchant-fixup}: 
+-	Temorarily remove OSX CI (#27) * Attempt to get OSX CI working * Remove OSX CI testing for now...  We need to figure out how to get C spelling libray enchant
++	* .github/workflows/{osx.yml => osx.yml-needs-enchant-fixup}:
++	Temporarily remove OSX CI (#27) * Attempt to get OSX CI working * Remove OSX CI testing for now...  We need to figure out how to get C spelling library enchant
+ 	installed...  Or make that optional in mathics-core.
+ 
+ 2024-08-08  rocky <rb@dustyfeet.com>
+@@ -24,7 +24,7 @@
+ 
+ 2024-08-08  Juan Mauricio Matera <matera@fisica.unlp.edu.ar>
+ 
+-	* pymathics/natlang/textual_analysis.py: addiing blanklines between
++	* pymathics/natlang/textual_analysis.py: adding blanklines between
+ 	</dl> and the examples in docstrings (#25)
+ 
+ 2024-08-06  rocky <rb@dustyfeet.com>
+@@ -132,7 +132,7 @@
+ 2023-02-19  R. Bernstein <rocky@users.noreply.github.com>
+ 
+ 	* .github/workflows/osx.yml, Makefile, README.rst,
+-	pymathics/natlang/__init__.py, pymathics/natlang/main.py, setup.py: 
++	pymathics/natlang/__init__.py, pymathics/natlang/main.py, setup.py:
+ 	Make a pass over setup, docs, and top-level things (#9) * README.rst: move customization from main.py here * Makefile: LoadModule name has changes * __init__.py: list imports, go over docstring which forms chapter
+ 	information * main.py: numerous small doc changes; fix some type errors.  * setup.py and spacy, langid, and pyenchant are no longer optional.
+ 	  Note pyenchant rather than enchant is now used.
+@@ -274,7 +274,7 @@
+ 
+ 2020-12-22  rocky <rb@dustyfeet.com>
+ 
+-	* CHANGES.rst, README.rst, pymathics/natlang/__main__.py, setup.py: 
++	* CHANGES.rst, README.rst, pymathics/natlang/__main__.py, setup.py:
+ 	Update README.rst, remove a deprecation warning
+ 
+ 2020-12-22  rocky <rb@dustyfeet.com>
+@@ -296,7 +296,7 @@
+ 
+ 2020-12-22  rocky <rb@dustyfeet.com>
+ 
+-	* CHANGES.rst, README.rst, pymathics/natlang/version.py, setup.py: 
++	* CHANGES.rst, README.rst, pymathics/natlang/version.py, setup.py:
+ 	Get ready for release 1.1.0
+ 
+ 2020-11-15  rocky <rb@dustyfeet.com>
+@@ -310,7 +310,7 @@
+ 
+ 2020-11-14  rocky <rb@dustyfeet.com>
+ 
+-	* admin-tools/make-dist.sh, admin-tools/pyenv-versions: 
++	* admin-tools/make-dist.sh, admin-tools/pyenv-versions:
+ 	Administrivia
+ 
+ 2020-11-14  rocky <rb@dustyfeet.com>
+@@ -337,7 +337,7 @@
+ 
+ 2020-10-31  rocky <rocky@gnu.org>
+ 
+-	* pymathics/__init__.py, pymathics/natlang/__main__.py, setup.py: 
++	* pymathics/__init__.py, pymathics/natlang/__main__.py, setup.py:
+ 	Working better now...  setup.py: Use namespace packages. Put this under namespace
+ 	PyMathics.  natlang/__main__.py: With next round of changes, we
+ 	                     don't need to set "context".
+@@ -345,4 +345,3 @@
+ 2020-10-31  rocky <rocky@gnu.org>
+ 
+ 	* Initial natlang setup
+-
