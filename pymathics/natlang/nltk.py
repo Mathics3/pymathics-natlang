@@ -7,6 +7,8 @@ import re
 from itertools import chain
 
 import nltk
+from pattern.en import lexeme, pluralize
+
 from mathics.builtin.codetables import iso639_3
 from mathics.core.atoms import String
 from mathics.core.builtin import Builtin, MessageException
@@ -304,12 +306,9 @@ class WordProperty:
         try:
             word, pos, _ = desc
             if pos == "Verb":
-                from pattern.en import lexeme
 
                 return [w for w in reversed(lexeme(word)) if w != word]
             elif pos == "Noun":
-                from pattern.en import pluralize
-
                 return [pluralize(word)]
             elif pos == "Adjective":
                 from pattern.en import comparative, superlative

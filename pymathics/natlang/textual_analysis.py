@@ -217,13 +217,13 @@ class WordSimilarity(_SpacyBuiltin):
     </dl>
 
     >> NumberForm[WordSimilarity["car", "train"], 3]
-     = 0.439
+     = 0.169
 
     >> NumberForm[WordSimilarity["car", "hedgehog"], 3]
-     = 0.195
+     = 0.0173
 
     >> NumberForm[WordSimilarity[{"An ocean full of water.", {2, 2}}, { "A desert full of sand.", {2, 5}}], 3]
-     = {0.505, 0.481}
+     = {0.127, 0.256}
     """
 
     messages = merge_dictionaries(

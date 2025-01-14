@@ -1,7 +1,8 @@
 import time
 from typing import Optional
 
-from mathics.session import MathicsSession, import_and_load_builtins
+from mathics.core.load_builtin import import_and_load_builtins
+from mathics.session import MathicsSession
 
 import_and_load_builtins()
 

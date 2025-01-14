@@ -6,6 +6,9 @@ import pkgutil
 
 import pytest
 
+from types import ModuleType
+from typing import Dict
+
 from mathics.core.load_builtin import name_is_builtin_symbol
 from mathics.core.builtin import Builtin
 from mathics.doc.gather import skip_doc
