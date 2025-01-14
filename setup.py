@@ -59,7 +59,7 @@ setup(
         "langid",  # replace with a supported newer package, e.g. via spacy
         "llvmlite>=0.36",
         "nltk>=3.8.0",
-        "pattern>=3.6.0",
+        "pattern",
         "pyenchant>=3.2.0",
         "pycountry>=3.2.0",
         "spacy>=3.4",
