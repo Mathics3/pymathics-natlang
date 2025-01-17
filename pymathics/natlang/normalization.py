@@ -101,7 +101,7 @@ class TextCases(_SpacyBuiltin):
     ## >> TextCases[Import["ExampleData/EinsteinSzilLetter.txt"], "Person", 3][[2;;3]]
     ##  = {L. Szilard, Joliot}
 
-    >> TextCases["Anne, Peter and Mr Johnes say hello.", "Person", 3][[2;;3]]
+    >> TextCases["Saul, Peter and Mr Johnes say hello.", "Person", 3][[2;;3]]
      = {Peter, Johnes}
 
     """

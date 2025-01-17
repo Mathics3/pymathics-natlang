@@ -6,6 +6,9 @@ import pkgutil
 
 import pytest
 
+from types import ModuleType
+from typing import Dict
+
 from mathics.core.load_builtin import name_is_builtin_symbol
 from mathics.core.builtin import Builtin
 from mathics.doc.gather import skip_doc
@@ -60,7 +63,7 @@ local_vocabulary = (
 language_tool = None
 if CHECK_GRAMMAR:
     try:
-        import language_tool_python
+        import language_tool_python  # type: ignore[import-not-found]
 
         language_tool = language_tool_python.LanguageToolPublicAPI("en-US")
         # , config={ 'cacheSize': 1000, 'pipelineCaching': True })
@@ -95,7 +98,7 @@ for subdir in module_subdirs:
         module_names.append(f"{subdir}.{modname}")
 
 
-modules = dict()
+modules: Dict[str, ModuleType] = dict()
 for module_name in module_names:
     import_module(module_name)
 
@@ -103,6 +106,7 @@ for module_name in module_names:
 
 
 def check_grammar(text: str):
+    assert language_tool is not None
     matches = language_tool.check(text)
     filtered_matches = []
     if matches:
@@ -138,10 +142,10 @@ def check_well_formatted_docstring(docstr: str, instance: Builtin, module_name: 
     ), f"missing <dd> field {instance.get_name()} from {module_name}"
     assert (
         docstr.count("</dt>") == 0
-    ), f"unnecesary </dt> {instance.get_name()} from {module_name}"
+    ), f"unnecessary </dt> {instance.get_name()} from {module_name}"
     assert (
         docstr.count("</dd>") == 0
-    ), f"unnecesary </dd> field {instance.get_name()} from {module_name}"
+    ), f"unnecessary </dd> field {instance.get_name()} from {module_name}"
 
     assert (
         docstr.count("<url>") > 0
