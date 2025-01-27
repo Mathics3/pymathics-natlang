@@ -1,8 +1,22 @@
 CHANGES
 =======
 
+8.0.0
+-----
+
+Jan 26, 2025
+
+This release tracks the API changes in the Mathics Kernel.
+
+
+Use the PyPI package `PatternLite` instead of the defunct 3.6-ish `pattern` (which has now been replaced with something totally different from NLP).
+
+
+
 7.0.0
 -----
+
+Aug 10, 2025
 
 * Revise for 7.0.0 Mathics3 API; we need to explicilty load builtins
 
