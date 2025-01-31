@@ -53,10 +53,10 @@ class DictionaryLookup(_WordListBuiltin):
     https://reference.wolfram.com/language/ref/DictionaryLookup.html</url>
 
     <dl>
-      <dt>'DictionaryLookup[$word$]'
+      <dt>'DictionaryLookup'[$word$]
       <dd>lookup words that match the given $word$ or pattern.
 
-      <dt>'DictionaryLookup[$word$, $n$]'
+      <dt>'DictionaryLookup'[$word$, $n$]
       <dd>lookup first $n$ words that match the given $word$ or pattern.
     </dl>
 
@@ -121,7 +121,7 @@ class DictionaryWordQ(_WordNetBuiltin):
     https://reference.wolfram.com/language/ref/DictionaryWordQ.html</url>
 
     <dl>
-      <dt>'DictionaryWordQ[$word$]'
+      <dt>'DictionaryWordQ'[$word$]
       <dd>returns True if $word$ is a word usually found in dictionaries, and False otherwise.
     </dl>
 
@@ -157,10 +157,10 @@ class RandomWord(_WordListBuiltin):
       <dt>'RandomWord[]'
       <dd>returns a random word.
 
-      <dt>'RandomWord[$type$]'
+      <dt>'RandomWord'[$type$]
       <dd>returns a random word of the given $type$, e.g. of type "Noun" or "Adverb".
 
-      <dt>'RandomWord[$type$, $n$]'
+      <dt>'RandomWord'[$type$, $n$]
       <dd>returns $n$ random words of the given $type$.
     </dl>
 
@@ -208,10 +208,10 @@ class WordData(_WordListBuiltin):
     https://reference.wolfram.com/language/ref/WordData.html</url>
 
     <dl>
-      <dt>'WordData[$word$]'
+      <dt>'WordData'[$word$]
       <dd>returns a list of possible senses of a word.
 
-      <dt>'WordData[$word$, $property$]'
+      <dt>'WordData'[$word$, $property$]
       <dd>returns detailed information about a word regarding $property$, e.g. "Definitions" or "Examples".
     </dl>
 
@@ -374,7 +374,7 @@ class WordDefinition(_WordNetBuiltin):
     https://reference.wolfram.com/language/ref/WordDefinition.html</url>
 
     <dl>
-      <dt>'WordDefinition[$word$]'
+      <dt>'WordDefinition'[$word$]
       <dd>returns a definition of $word$ or Missing["Available"] if $word$ is not known.
     </dl>
 
@@ -406,7 +406,7 @@ class WordList(_WordListBuiltin):
       <dt>'WordList[]'
       <dd>returns a list of common words.
 
-      <dt>'WordList[$type$]'
+      <dt>'WordList'[$type$]
       <dd>returns a list of common words of type $type$.
     </dl>
 

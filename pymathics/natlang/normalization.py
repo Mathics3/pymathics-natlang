@@ -32,10 +32,10 @@ class DeleteStopwords(_SpacyBuiltin):
     )
 
     <dl>
-      <dt>'DeleteStopwords[$list$]'
+      <dt>'DeleteStopwords'[$list$]
       <dd>returns the words in $list$ without stopwords.
 
-      <dt>'DeleteStopwords[$string$]'
+      <dt>'DeleteStopwords'[$string$]
       <dd>returns $string$ without stopwords.
     </dl>
 
@@ -88,7 +88,7 @@ class TextCases(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/TextCases.html</url>
 
     <dl>
-      <dt>'TextCases[$text$, $form$]'
+      <dt>'TextCases'[$text$, $form$]
       <dd>returns all elements of type $form$ in $text$ in order of their appearance.
     </dl>
 
@@ -132,7 +132,7 @@ class TextPosition(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/TextPosition.html</url>
 
     <dl>
-      <dt>'TextPosition[$text$, $form$]'
+      <dt>'TextPosition'[$text$, $form$]
       <dd>returns the positions of elements of type $form$ in $text$ in order of their appearance.
     </dl>
 
@@ -170,10 +170,10 @@ class TextSentences(_SpacyBuiltin):
 
 
     <dl>
-      <dt>'TextSentences[$string$]'
+      <dt>'TextSentences'[$string$]
       <dd>returns the sentences in $string$.
 
-      <dt>'TextSentences[$string$, $n$]'
+      <dt>'TextSentences'[$string$, $n$]
       <dd>returns the first $n$ sentences in $string$
     </dl>
 
@@ -210,7 +210,7 @@ class TextStructure(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/TextStructure.html</url>
 
     <dl>
-      <dt>'TextStructure[$text$, $form$]'
+      <dt>'TextStructure'[$text$, $form$]
       <dd>returns the grammatical structure of $text$ as $form$.
     </dl>
 
@@ -272,10 +272,10 @@ class TextWords(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/TextWords.html</url>
 
     <dl>
-      <dt>'TextWords[$string$]'
+      <dt>'TextWords'[$string$]
       <dd>returns the words in $string$.
 
-      <dt>'TextWords[$string$, $n$]'
+      <dt>'TextWords'[$string$, $n$]
       <dd>returns the first $n$ words in $string$
     </dl>
 

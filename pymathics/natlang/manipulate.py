@@ -20,7 +20,7 @@ class Pluralize(Builtin):
     https://reference.wolfram.com/language/ref/Pluralize.html</url>
 
     <dl>
-      <dt>'Pluralize[$word$]'
+      <dt>'Pluralize'[$word$]
       <dd>returns the plural form of $word$.
     </dl>
 
