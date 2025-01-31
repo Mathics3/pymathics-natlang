@@ -32,7 +32,7 @@ class LanguageIdentify(Builtin):
     https://reference.wolfram.com/language/ref/LanguageIdentify.html</url>
 
     <dl>
-      <dt>'LanguageIdentify[$text$]'
+      <dt>'LanguageIdentify'[$text$]
       <dd>returns the name of the language used in $text$.
     </dl>
 

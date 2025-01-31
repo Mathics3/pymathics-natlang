@@ -34,7 +34,7 @@ class Containing(Builtin):
     https://reference.wolfram.com/language/ref/Containing.html</url>
 
     <dl>
-      <dt>'Containing[$outer$, $inner$]'
+      <dt>'Containing'[$outer$, $inner$]
       <dd>represents an object of the type outer containing objects\
           of type inner.
     </dl>
@@ -65,7 +65,7 @@ class SpellingCorrectionList(Builtin):
     https://reference.wolfram.com/language/ref/SpellingCorrectionList.html</url>
 
     <dl>
-      <dt>'SpellingCorrectionList[$word$]'
+      <dt>'SpellingCorrectionList'[$word$]
       <dd>returns a list of suggestions for spelling corrected versions of $word$.
     </dl>
 
@@ -125,7 +125,7 @@ class WordCount(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/WordCount.html</url>
 
     <dl>
-      <dt>'WordCount[$string$]'
+      <dt>'WordCount'[$string$]
       <dd>returns the number of words in $string$.
     </dl>
 
@@ -149,7 +149,7 @@ class WordFrequency(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/WordFrequency.html</url>
 
     <dl>
-      <dt>'WordFrequency[$text$, $word$]'
+      <dt>'WordFrequency'[$text$, $word$]
       <dd>returns the relative frequency of $word$ in $text$.
     </dl>
 
@@ -206,13 +206,13 @@ class WordSimilarity(_SpacyBuiltin):
     https://reference.wolfram.com/language/ref/WordSimilarity.html</url>
 
     <dl>
-      <dt>'WordSimilarity[$text1$, $text2$]'
+      <dt>'WordSimilarity'[$text_1$, $text_2$]
       <dd>returns a real-valued measure of semantic similarity of two texts or words.
 
-      <dt>'WordSimilarity[{$text1$, $i1$}, {$text2$, $j1$}]'
+      <dt>'WordSimilarity'[{$text_1$, $i1$}, {$text_2$, $j_1$}]
       <dd>returns a measure of similarity of two words within two texts.
 
-      <dt>'WordSimilarity[{$text1$, {$i1$, $i2$, ...}}, {$text2$, {$j1$, $j2$, ...}}]'
+      <dt>'WordSimilarity'[{$text_1$, {$i1$, $i2$, ...}}, {$text_2$, {$j_1$, $j_2$, ...}}]
       <dd>returns a measure of similarity of multiple words within two texts.
     </dl>
 
@@ -300,10 +300,10 @@ class WordStem(Builtin):
     https://reference.wolfram.com/language/ref/WordStem.html</url>
 
     <dl>
-      <dt>'WordStem[$word$]'
+      <dt>'WordStem'[$word$]
       <dd>returns a stemmed form of $word$, thereby reducing an inflected form to its root.
 
-      <dt>'WordStem[{$word1$, $word2$, ...}]'
+      <dt>'WordStem'[{$word_1$, $word_2$, ...}]
       <dd>returns a stemmed form for list of $word$, thereby reducing an inflected form to its root.
     </dl>
 
