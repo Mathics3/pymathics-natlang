@@ -19,7 +19,7 @@ cd ..
 source pymathics/natlang/version.py
 echo $__version__
 
-pyversion=3.12
+pyversion=3.11
 if ! pyenv local $pyversion ; then
     exit $?
 fi
