@@ -1,6 +1,15 @@
 CHANGES
 =======
 
+8.0.1
+-----
+
+Feb 8, 2025
+
+Documentation has been revised to make better use of TeX math mode.
+Adjust and correct packaging.
+
+
 8.0.0
 -----
 
@@ -9,7 +18,7 @@ Jan 26, 2025
 This release tracks the API changes in the Mathics Kernel.
 
 
-Use the PyPI package `PatternLite` instead of the defunct 3.6-ish `pattern` (which has now been replaced with something totally different from NLP).
+Use the PyPI package ``PatternLite`` instead of the defunct 3.6-ish ``pattern`` (which has now been replaced with something totally different from NLP).
 
 
 

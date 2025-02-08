@@ -1,6 +1,15 @@
---- ChangeLog	2025-01-26 10:40:02.719673478 -0500
-+++ ChangeLog-spell-corrected	2025-01-26 10:40:22.032686996 -0500
-@@ -15,7 +15,7 @@
+--- ChangeLog	2025-02-08 12:11:42.825239077 -0500
++++ ChangeLog.spell-corrected	2025-02-08 12:11:10.503216651 -0500
+@@ -23,7 +23,7 @@
+ 
+ 	* .github/workflows/ubuntu.yml, .pre-commit-config.yaml,
+ 	CHANGES.rst, ChangeLog-spell-corrected.diff,
+-	pymathics/natlang/version.py, setup.py: Release 8.0.0 (#30) Release 8.0.0 * Upate version number, * Use PyPI wheel in CI * Go over release notes
++	pymathics/natlang/version.py, setup.py: Release 8.0.0 (#30) Release 8.0.0 * Update version number, * Use PyPI wheel in CI * Go over release notes
+ 
+ 2025-01-16  R. Bernstein <rocky@users.noreply.github.com>
+ 
+@@ -38,7 +38,7 @@
  2024-12-29  rocky <rb@dustyfeet.com>
  
  	* pymathics/natlang/linguistic_data.py: fix an import ...  We were importing it from a module that was also importing it (but
@@ -9,7 +18,7 @@
  	place it is defined.
  
  2024-08-11  R. Bernstein <rocky@users.noreply.github.com>
-@@ -28,8 +28,8 @@
+@@ -51,8 +51,8 @@
  
  2024-08-11  R. Bernstein <rocky@users.noreply.github.com>
  
@@ -20,7 +29,7 @@
  	installed...  Or make that optional in mathics-core.
  
  2024-08-08  rocky <rb@dustyfeet.com>
-@@ -45,7 +45,7 @@
+@@ -68,7 +68,7 @@
  
  2024-08-08  Juan Mauricio Matera <matera@fisica.unlp.edu.ar>
  
@@ -29,7 +38,7 @@
  	</dl> and the examples in docstrings (#25)
  
  2024-08-06  rocky <rb@dustyfeet.com>
-@@ -153,7 +153,7 @@
+@@ -176,7 +176,7 @@
  2023-02-19  R. Bernstein <rocky@users.noreply.github.com>
  
  	* .github/workflows/osx.yml, Makefile, README.rst,
@@ -38,7 +47,7 @@
  	Make a pass over setup, docs, and top-level things (#9) * README.rst: move customization from main.py here * Makefile: LoadModule name has changes * __init__.py: list imports, go over docstring which forms chapter
  	information * main.py: numerous small doc changes; fix some type errors.  * setup.py and spacy, langid, and pyenchant are no longer optional.
  	  Note pyenchant rather than enchant is now used.
-@@ -295,7 +295,7 @@
+@@ -318,7 +318,7 @@
  
  2020-12-22  rocky <rb@dustyfeet.com>
  
@@ -47,7 +56,7 @@
  	Update README.rst, remove a deprecation warning
  
  2020-12-22  rocky <rb@dustyfeet.com>
-@@ -317,7 +317,7 @@
+@@ -340,7 +340,7 @@
  
  2020-12-22  rocky <rb@dustyfeet.com>
  
@@ -56,7 +65,7 @@
  	Get ready for release 1.1.0
  
  2020-11-15  rocky <rb@dustyfeet.com>
-@@ -331,7 +331,7 @@
+@@ -354,7 +354,7 @@
  
  2020-11-14  rocky <rb@dustyfeet.com>
  
@@ -65,7 +74,7 @@
  	Administrivia
  
  2020-11-14  rocky <rb@dustyfeet.com>
-@@ -358,7 +358,7 @@
+@@ -381,7 +381,7 @@
  
  2020-10-31  rocky <rocky@gnu.org>
  
@@ -74,7 +83,7 @@
  	Working better now...  setup.py: Use namespace packages. Put this under namespace
  	PyMathics.  natlang/__main__.py: With next round of changes, we
  	                     don't need to set "context".
-@@ -366,4 +366,3 @@
+@@ -389,4 +389,3 @@
  2020-10-31  rocky <rocky@gnu.org>
  
  	* Initial natlang setup
