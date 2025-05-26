@@ -11,8 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        # python-version: ['3.9', '3.10'] # Figure out what's wrong here.
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ['3.9', '3.10', '3.11', '3.12', '3.13']
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -21,18 +20,18 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
-        # python -m pip install --upgrade pip
+        python -m pip install --upgrade pip
         python -m pip install pytest
-        # Can comment out when next Mathics3 core and Mathics-scanner are released
-        # python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
-        # python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
-        # git clone https://github.com/Mathics3/mathics-core
-        # (cd mathics-core && pip3 install -e .[full])
-        # (cd mathics-core && bash ./admin-tools/make-JSON-tables.sh)
-        python -m pip install Mathics3[full]
-    - name: install pymathics natlang
+        # Go over and comment out stuff when next Mathics core and Mathics-scanner are released
+        python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
+        git clone https://github.com/Mathics3/mathics-core
+        (cd mathics-core && pip3 install -e .[full])
+        (cd mathics-core && bash ./admin-tools/make-JSON-tables.sh)
+        python -m pip install -e git+https://github.com/Mathics3/Mathics3-Module-Base#egg=Mathics3-Module-Base
+        python -m pip install -e .
+    - name: Install Mathics3 natlang Module
       run: |
         make develop
-    - name: Test natlang
+    - name: Test natlang Mathics3 Module
       run: |
         make -j3 check

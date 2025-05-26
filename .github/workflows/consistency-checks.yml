@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ['3.10']
+        python-version: ['3.12']
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
@@ -27,6 +27,7 @@ jobs:
         python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
         (cd src/mathics3 && bash ./admin-tools/make-JSON-tables.sh)
         # python -m pip install Mathics3[full]
+        python -m pip install -e git+https://github.com/Mathics3/Mathics3-Module-Base#egg=Mathics3-Module-Base
     - name: Install Pymathics.natlang
       run: |
         make develop
