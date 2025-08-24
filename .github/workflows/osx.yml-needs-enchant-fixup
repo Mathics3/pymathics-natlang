@@ -9,33 +9,33 @@ on:
 jobs:
   build:
     env:
-      LDFLAGS: "-L/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib -lunwind"
-      CPPFLAGS; "-I/opt/homebrew/opt/llvm/include"
+      LDFLAGS: "-L/opt/homebrew/opt/llvm/lib/c++ -L/opt/homebrew/opt/llvm/lib -L/opt/homebrew/opt/llvm/lib/unwind -lunwind"
+      CPPFLAGS: "-I/opt/homebrew/opt/llvm/include"
     runs-on: macos-latest
     strategy:
       matrix:
         os: [macOS]
-        python-version: ['3.9']
+        python-version: ['3.13']
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v5
       with:
         python-version: ${{ matrix.python-version }}
-    - name: Install OS dependencies
+    - name: Install dependencies
       run: |
-        brew install llvm tesseract enchant mysql
+        brew update
+        brew install llvm lld tesseract enchant mysql
         python -m pip install --upgrade pip
         pip install pytest pyenchant
-        PYENCHANT_VERBOSE_FIND=1 python -c 'import enchant'
-
-        # Can comment out when next Mathics core and Mathics-scanner are released
-        # python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
-        # Can remove after next Mathics-core release
-        python -m pip install -e git+https://github.com/Mathics3/mathics-core#egg=Mathics3[full]
-        (cd src/mathics3 && bash ./admin-tools/make-op-tables.sh)
-        # python -m pip install Mathics3[full]
-    - name: Install pymathics.natlang
+        # Go over and comment out stuff when next Mathics core and Mathics-scanner are released
+        python -m pip install -e git+https://github.com/Mathics3/mathics-scanner#egg=Mathics-Scanner[full]
+        git clone https://github.com/Mathics3/mathics-core
+        (cd mathics-core && pip3 install -e .[full])
+        (cd mathics-core && bash ./admin-tools/make-JSON-tables.sh)
+        python -m pip install -e git+https://github.com/Mathics3/Mathics3-Module-Base#egg=Mathics3-Module-Base
+        python -m pip install -e .
+    - name: Install Mathics3 natlang Module
       run: |
         make develop
     - name: Test natlang

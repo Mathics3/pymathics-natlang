@@ -7,7 +7,7 @@ import re
 from itertools import chain
 
 import nltk
-from pattern.en import lexeme, pluralize
+from pattern.text.en import lexeme, pluralize
 
 from mathics.builtin.codetables import iso639_3
 from mathics.core.atoms import String
