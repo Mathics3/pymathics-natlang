@@ -1,11 +1,13 @@
 [build-system]
 requires = [
- "setuptools",
-	"sympy>=1.11,<1.13",
+	"setuptools",
+        "Mathics3-Module-Base",
+        "Mathics3>=9.0.0",
         "PatternLite",
         "langid",  # replace with a supported newer package, e.g. via spacy
         "matplotlib",
         "mpmath>=1.2.0",
+        "nltk>=3.8.0",
         "numpy",
         "pycountry>=3.2.0",
         "pyenchant>=3.2.0",
@@ -19,13 +21,14 @@ build-backend = "setuptools.build_meta"
 name = "Mathics3-natlang"
 description = "Mathics3 Natural Language Toolkit module"
 dependencies = [
-        "Mathics3>=8.0.1",
-        "Mathics3-Module-Base",
+        "Mathics3>=9.0.0",
+        "Mathics3-Module-Base>=9.0.0",
         "click>=8.0",
         "joblib>=1.0.1",
         "langid",  # replace with a supported newer package, e.g. via spacy
         "llvmlite>=0.36",
         "nltk>=3.8.0",
+        "mpmath>=1.2.0",
         "PatternLite",
         "pyenchant>=3.2.0",
         "pycountry>=3.2.0",
@@ -34,7 +37,7 @@ dependencies = [
 ]
 requires-python = ">=3.10"
 readme = "README.rst"
-license = {text = "GPL"}
+license = "GPL-3.0-or-later"
 keywords = ["Mathematica", "Wolfram", "Interpreter", "Shell", "Math", "CAS"]
 maintainers = [
     {name = "Mathics Group", email = "mathics-devel@googlegroups.com"},
@@ -42,7 +45,6 @@ maintainers = [
 classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
