@@ -63,7 +63,16 @@ from pymathics.natlang.textual_analysis import (
     WordSimilarity,
     WordStem,
 )
-from pymathics.natlang.translation import LanguageIdentify
+
+from pymathics.natlang.linguistic_data import (
+    DictionaryLookup,
+    DictionaryWordQ,
+    RandomWord,
+    WordData,
+    WordDefinition,
+    WordList,
+)
+from pymathics.natlang.linguistic_data.translation import LanguageIdentify
 from pymathics.natlang.version import __version__
 
 pymathics_version_data = {
