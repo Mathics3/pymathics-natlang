@@ -63,4 +63,6 @@ packages = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "pymathics.natlang.__version__"}
+# We cannot load the version directly from pymathics.natlang.__init__,
+# because it would try to import modules which are not already installed.
+version = {attr = "pymathics.natlang.version.__version__"}
