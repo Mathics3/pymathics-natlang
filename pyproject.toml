@@ -1,6 +1,6 @@
 [build-system]
 requires = [
-	"setuptools",
+        "setuptools>=70.0.0",
         "Mathics3-Module-Base",
         "Mathics3>=9.0.0",
         "PatternLite",
