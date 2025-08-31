@@ -33,13 +33,9 @@ wordlist:
 	$(PYTHON) -m nltk.downloader wordnet2022 omw-1.4
 	$(PYTHON) -m spacy download $(SPACY_DOWNLOAD)
 
-#: build everything needed to install
-build: pypi-setup
-	$(PYTHON) ./setup.py build
-
 #: Check Python version, and install PyPI dependencies
 pypi-setup:
-	$(PIP) install -e .
+	$(PIP) install --no-build-isolation -e .
 
 #: Set up to run from the source tree
 develop: pypi-setup

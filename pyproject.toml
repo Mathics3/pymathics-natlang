@@ -1,17 +1,7 @@
 [build-system]
 requires = [
- "setuptools>=70.0.0",
-	"sympy>=1.11,<1.13",
-        "PatternLite",
-        "langid",  # replace with a supported newer package, e.g. via spacy
-        "matplotlib",
-        "mpmath>=1.2.0",
-        "numpy",
-        "pycountry>=3.2.0",
-        "pyenchant>=3.2.0",
-        "scipy>=1.10.0",
-        "spacy>=3.4",
-        "wasabi<1.1.0,>=0.8.2",
+        "setuptools>=70.0.0",
+		"wheel",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -19,13 +9,16 @@ build-backend = "setuptools.build_meta"
 name = "Mathics3-natlang"
 description = "Mathics3 Natural Language Toolkit module"
 dependencies = [
-        "Mathics3>=8.0.1",
-        "Mathics3-Module-Base",
+        "setuptools>=70.0.0",
+        "Mathics3>=9.0.0",
+        "Mathics3-Module-Base>=9.0.0",
         "click>=8.0",
         "joblib>=1.0.1",
-        "langid",  # replace with a supported newer package, e.g. via spacy
+		# replace with a supported newer package, e.g. via spacy
+        "langid",  
         "llvmlite>=0.36",
         "nltk>=3.8.0",
+        "mpmath>=1.2.0",
         "PatternLite",
         "pyenchant>=3.2.0",
         "pycountry>=3.2.0",
@@ -34,7 +27,7 @@ dependencies = [
 ]
 requires-python = ">=3.10"
 readme = "README.rst"
-license = {text = "GPL"}
+license = "GPL-3.0-or-later"
 keywords = ["Mathematica", "Wolfram", "Interpreter", "Shell", "Math", "CAS"]
 maintainers = [
     {name = "Mathics Group", email = "mathics-devel@googlegroups.com"},
@@ -42,7 +35,6 @@ maintainers = [
 classifiers = [
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
@@ -71,4 +63,6 @@ packages = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "pymathics.natlang.__version__"}
+# We cannot load the version directly from pymathics.natlang.__init__,
+# because it would try to import modules which are not already installed.
+version = {attr = "pymathics.natlang.version.__version__"}
