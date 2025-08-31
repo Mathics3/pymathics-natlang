@@ -61,4 +61,4 @@ packages = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "pymathics.natlang.__version__"}
+version = {attr = "pymathics.natlang.version.__version__"}
