@@ -1,6 +1,6 @@
 [build-system]
 requires = [
- "setuptools",
+ "setuptools>=70.0.0",
 	"sympy>=1.11,<1.13",
         "PatternLite",
         "langid",  # replace with a supported newer package, e.g. via spacy
