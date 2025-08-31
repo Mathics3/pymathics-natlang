@@ -1,19 +1,7 @@
 [build-system]
 requires = [
         "setuptools>=70.0.0",
-        "Mathics3-Module-Base",
         "Mathics3>=9.0.0",
-        "PatternLite",
-        "langid",  # replace with a supported newer package, e.g. via spacy
-        "matplotlib",
-        "mpmath>=1.2.0",
-        "nltk>=3.8.0",
-        "numpy",
-        "pycountry>=3.2.0",
-        "pyenchant>=3.2.0",
-        "scipy>=1.10.0",
-        "spacy>=3.4",
-        "wasabi<1.1.0,>=0.8.2",
 ]
 build-backend = "setuptools.build_meta"
 
