@@ -9,6 +9,7 @@ build-backend = "setuptools.build_meta"
 name = "Mathics3-natlang"
 description = "Mathics3 Natural Language Toolkit module"
 dependencies = [
+        "setuptools>=70.0.0",
         "Mathics3>=9.0.0",
         "Mathics3-Module-Base>=9.0.0",
         "click>=8.0",
