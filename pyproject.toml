@@ -1,7 +1,6 @@
 [build-system]
 requires = [
         "setuptools>=70.0.0",
-        "Mathics3>=9.0.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -13,7 +12,8 @@ dependencies = [
         "Mathics3-Module-Base>=9.0.0",
         "click>=8.0",
         "joblib>=1.0.1",
-        "langid",  # replace with a supported newer package, e.g. via spacy
+		# replace with a supported newer package, e.g. via spacy
+        "langid",  
         "llvmlite>=0.36",
         "nltk>=3.8.0",
         "mpmath>=1.2.0",
@@ -61,4 +61,5 @@ packages = [
 ]
 
 [tool.setuptools.dynamic]
-version = {attr = "pymathics.natlang.__version__"}
+#version = {attr = "pymathics.natlang.__version__"}
+version = "9.0.0"
