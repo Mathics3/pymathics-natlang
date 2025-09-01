@@ -19,10 +19,11 @@ cd ..
 source pymathics/natlang/version.py
 echo $__version__
 
-pyversion=3.11
+pyversion=3.13
 if ! pyenv local $pyversion ; then
     exit $?
 fi
 
-python -m build
+pip wheel --wheel-dir=dist .
+python -m build --sdist
 finish
