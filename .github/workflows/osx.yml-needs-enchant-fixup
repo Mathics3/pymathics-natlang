@@ -1,4 +1,4 @@
-name: pymathics-natlang (macOS)
+name: Mathics3-Module-nltk (macOS)
 
 on:
   push:
@@ -35,9 +35,9 @@ jobs:
         (cd mathics-core && bash ./admin-tools/make-JSON-tables.sh)
         python -m pip install -e git+https://github.com/Mathics3/Mathics3-Module-Base#egg=Mathics3-Module-Base
         python -m pip install -e .
-    - name: Install Mathics3 natlang Module
+    - name: Install Mathics3 Module nltk
       run: |
         make develop
-    - name: Test natlang
+    - name: Test Mathics Module nltk
       run: |
         make check

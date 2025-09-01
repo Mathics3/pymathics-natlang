@@ -41,7 +41,7 @@ pypi-setup:
 develop: pypi-setup
 	$(MAKE) wordlist
 
-#: Install pymathics.natlang
+#: Install Mathics3 Module nltk
 install: pypi-setup
 	$(PYTHON) setup.py install
 
