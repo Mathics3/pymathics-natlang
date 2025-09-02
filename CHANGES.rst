@@ -1,6 +1,16 @@
 CHANGES
 =======
 
+9.0.0
+-----
+
+Sept 1, 2025
+
+* Add Python 3.13 support. Drop support for Python 3.8 and Python 3.9
+* Update to 9.0.0 Mathics3 API
+* Turn Document organization into a Guide section
+
+
 8.0.1
 -----
 
