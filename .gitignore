@@ -6,9 +6,8 @@
 /ChangeLog.orig
 /ChangeLog.rej
 /ChangeLog.spell-corrected
-/Mathics3_natlang.egg-info
+/Mathics3_Module_nltk.egg-info
 /build
 /dist
-/pymathics_natlang.egg-info
 /tmp
 __pycache__

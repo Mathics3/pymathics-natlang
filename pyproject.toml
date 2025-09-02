@@ -1,21 +1,31 @@
 [build-system]
 requires = [
-        "setuptools>=70.0.0",
-		"wheel",
+	"setuptools",
+        "Mathics3-Module-Base",
+        "Mathics3>=9.0.0",
+        "PatternLite",
+        "langid",  # replace with a supported newer package, e.g. via spacy
+        "matplotlib",
+        "mpmath>=1.2.0",
+        "nltk>=3.8.0",
+        "numpy",
+        "pycountry>=3.2.0",
+        "pyenchant>=3.2.0",
+        "scipy>=1.10.0",
+        "spacy>=3.4",
+        "wasabi<1.1.0,>=0.8.2",
 ]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "Mathics3-natlang"
+name = "Mathics3-Module-nltk"
 description = "Mathics3 Natural Language Toolkit module"
 dependencies = [
-        "setuptools>=70.0.0",
         "Mathics3>=9.0.0",
         "Mathics3-Module-Base>=9.0.0",
         "click>=8.0",
         "joblib>=1.0.1",
-		# replace with a supported newer package, e.g. via spacy
-        "langid",  
+        "langid",  # replace with a supported newer package, e.g. via spacy
         "llvmlite>=0.36",
         "nltk>=3.8.0",
         "mpmath>=1.2.0",
@@ -46,11 +56,14 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
     "Topic :: Software Development :: Interpreters",
 ]
-dynamic = ["version"]
+
+version = "9.0.0"
+# # FIXME: reinstate this
+# dynamic = ["version"]
 
 [project.urls]
-Homepage = "https://github.com/Mathics3/pymathics-natlang"
-Downloads = "https://github.com/Mathics3/pymathics-natlang/releases"
+Homepage = "https://github.com/Mathics3/Mathics3-Module-nltk"
+Downloads = "https://github.com/Mathics3/Mathics3-Module-nltk/releases"
 
 [project.optional-dependencies]
 dev = [
@@ -62,7 +75,8 @@ packages = [
     "pymathics.natlang",
 ]
 
-[tool.setuptools.dynamic]
-# We cannot load the version directly from pymathics.natlang.__init__,
-# because it would try to import modules which are not already installed.
-version = {attr = "pymathics.natlang.version.__version__"}
+# # FIXME: reinstate this
+# [tool.setuptools.dynamic]
+# # We cannot load the version directly from pymathics.natlang.__init__,
+# # because it would try to import modules which are not already installed.
+# version = {attr = "pymathics.natlang.version.__version__"}

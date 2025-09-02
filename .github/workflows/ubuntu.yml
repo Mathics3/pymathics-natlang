@@ -30,10 +30,10 @@ jobs:
         # (cd mathics-core && pip3 install -e .[full])
         # (cd mathics-core && bash ./admin-tools/make-JSON-tables.sh)
         # python -m pip install -e git+https://github.com/Mathics3/Mathics3-Module-Base#egg=Mathics3-Module-Base
-    - name: Install Mathics3 natlang Module
+    - name: Install Mathics3 Module nltk
       run: |
         python -m pip install --no-build-isolation setuptools Mathics3[full] nltk PatternLite enchant
         make develop
-    - name: Test natlang Mathics3 Module
+    - name: Test Mathics3 Module nltk
       run: |
         make -j3 check

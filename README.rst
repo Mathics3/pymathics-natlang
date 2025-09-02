@@ -18,7 +18,7 @@ Example Session
    In[4] = TextCases["I was in London last year.", "Pronoun"]
    Out[4]= {I}
 
-More examples can be found in the `test file <https://github.com/Mathics3/pymathics-natlang/blob/master/test/test_natlang.py>`_.
+More examples can be found in the `test file <https://github.com/Mathics3/Mathics3-Module-nltk/blob/master/test/test_nltk.py>`_.
 
 Installing and Running
 ----------------------
@@ -91,9 +91,9 @@ wn-data-your_language.tab.
 
 
 
-.. |Latest Version| image:: https://badge.fury.io/py/pymathics-natlang.svg
-		 :target: https://badge.fury.io/py/pymathics-natlang
-.. |Pypi Installs| image:: https://pepy.tech/badge/pymathics-natlang
-.. |Supported Python Versions| image:: https://img.shields.io/pypi/pyversions/pymathics-natlang.svg
-.. |Packaging status| image:: https://repology.org/badge/vertical-allrepos/pymathics-natlang.svg
-			    :target: https://repology.org/project/pymathics-natlang/versions
+.. |Latest Version| image:: https://badge.fury.io/py/Mathics3-Module-nltk.svg
+		 :target: https://badge.fury.io/py/Mathics3-Module-nltk
+.. |Pypi Installs| image:: https://pepy.tech/badge/Mathics3-Module-nltk
+.. |Supported Python Versions| image:: https://img.shields.io/pypi/pyversions/Mathics3-Module-nltk.svg
+.. |Packaging status| image:: https://repology.org/badge/vertical-allrepos/Mathics3-Module-nltk.svg
+			    :target: https://repology.org/project/Mathics3-Module-nltk/versions
