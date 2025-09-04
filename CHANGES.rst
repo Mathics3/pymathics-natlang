@@ -1,6 +1,14 @@
 CHANGES
 =======
 
+9.0.1
+-----
+
+Sept 4, 2025
+
+* Rerelease for botched wheel and tarball generation
+* Add Builtin Functions ``Antonyms`` and ``Synonyms``
+
 9.0.0
 -----
 
