@@ -3,4 +3,5 @@ include CHANGES.rst
 include ChangeLog
 include LICENSE
 include Makefile
-recursive-include test
+recursive-include pymathics *.py
+recursive-include test *.py

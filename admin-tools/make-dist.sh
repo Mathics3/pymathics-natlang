@@ -24,6 +24,7 @@ if ! pyenv local $pyversion ; then
     exit $?
 fi
 
+rm -fr build
 pip wheel --wheel-dir=dist .
 python -m build --sdist
 finish
