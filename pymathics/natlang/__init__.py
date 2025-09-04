@@ -1,7 +1,7 @@
 """
 Natural Language Processing
 
-Mathics3 Module module provides functions and variables to work with \
+Mathics3 Module provides functions and variables to work with \
 expressions in natural language, using the Python libraries:
 
 <ul>
