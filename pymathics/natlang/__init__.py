@@ -39,9 +39,11 @@ Examples:
 """
 
 from pymathics.natlang.linguistic_data import (
+    Antonyms,
     DictionaryLookup,
     DictionaryWordQ,
     RandomWord,
+    Synonyms,
     WordData,
     WordDefinition,
     WordList,
@@ -64,14 +66,6 @@ from pymathics.natlang.textual_analysis import (
     WordStem,
 )
 
-from pymathics.natlang.linguistic_data import (
-    DictionaryLookup,
-    DictionaryWordQ,
-    RandomWord,
-    WordData,
-    WordDefinition,
-    WordList,
-)
 from pymathics.natlang.linguistic_data.translation import LanguageIdentify
 from pymathics.natlang.version import __version__
 
@@ -83,6 +77,7 @@ pymathics_version_data = {
 }
 
 __all__ = [
+    "Antonyms",
     "Containing",
     "DeleteStopwords",
     "DictionaryLookup",
@@ -91,6 +86,7 @@ __all__ = [
     "Pluralize",
     "RandomWord",
     "SpellingCorrectionList",
+    "Synonyms",
     "TextCases",
     "TextPosition",
     "TextSentences",

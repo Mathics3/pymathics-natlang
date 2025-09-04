@@ -11,8 +11,6 @@ See the corresponding <url>:WMA:https://reference.wolfram.com/language/guide/Lin
 # TODO: Complete me
 
 # WordFrequencyData — data on typical current and historical word frequencies
-# Synonyms — synonyms for a word
-# Antonyms — antonyms for a word
 # PartOfSpeech — possible parts of speech for a word
 
 
@@ -23,7 +21,7 @@ from typing import Optional
 from mathics.builtin.atomic.strings import anchor_pattern
 from mathics.builtin.numbers.randomnumbers import RandomEnv
 from mathics.core.atoms import String
-from mathics.core.builtin import MessageException
+from mathics.core.builtin import Builtin, MessageException
 from mathics.core.convert.expression import Expression, to_expression
 from mathics.core.convert.regex import to_regex
 from mathics.core.element import ElementsProperties
@@ -45,6 +43,63 @@ sort_order = "Linguistic Data"
 
 SymbolDictionaryLookup = Symbol("Pymathics`Natlang`DictionaryLookup")
 StringNotAvailable = String("NotAvailable")
+StringUnkownWord = String("UnknownWord")
+
+
+class Antonyms(_WordListBuiltin):
+    """
+    <url>:Antonyms:
+    https://www.merriam-webster.com/dictionary/antonym</url>
+
+    <url>:WMA link:
+    https://reference.wolfram.com/language/ref/Antonyms.html</url>
+
+    <dl>
+      <dt>'Antonyms["word"]'
+      <dd>returns a list of the antonyms associated with string "word".
+    </dl>
+
+    >> Antonyms["big"]
+     = {little, small}
+
+    >> Antonyms["forget"]
+     = ...
+
+    >> Antonyms["peccary"]
+     = {}
+
+    >> Antonyms["fdasfdsafdsa"]
+     = Missing[UnknownWord]
+
+    """
+
+    # Set checking that the number of arguments required is one.
+    eval_error = Builtin.generic_argument_error
+    expected_args = 1
+
+    summary_text = "list antonyms for a word"
+
+    def eval(self, word, evaluation: Evaluation, options: dict):
+        "Antonyms[word_String,  OptionsPattern[Antonyms]]"
+
+        wordnet, _ = self._load_wordnet(
+            evaluation, self._language_name(evaluation, options)
+        )
+        if not wordnet:
+            return Expression(SymbolMissing, StringNotAvailable)
+
+        wordnet_synsets = wordnet.synsets(word.value)
+        if len(wordnet_synsets) == 0:
+            return Expression(SymbolMissing, StringUnkownWord)
+
+        antonyms = set()
+        # Get all synsets for the word
+        for syn in wordnet_synsets:
+            for lemma in syn.lemmas():
+                for ant in lemma.antonyms():
+                    antonyms.add(ant.name().replace("_", " "))
+
+        return ListExpression(*(String(word) for word in sorted(antonyms)))
 
 
 class DictionaryLookup(_WordListBuiltin):
@@ -96,7 +151,7 @@ class DictionaryLookup(_WordListBuiltin):
                 matches = self.search(dictionary_words, pattern)
                 if n is not None:
                     matches = islice(matches, 0, n)
-                return ListExpression(*(String(match) for match in sorted(matches)))
+                return ListExpression(*(String(word) for word in sorted(matches)))
 
     def eval_english(self, word, evaluation):
         "DictionaryLookup[word_]"
@@ -199,6 +254,62 @@ class RandomWord(_WordListBuiltin):
         words = self._random_words(type.value, n.value, evaluation, options)
         if words:
             return ListExpression(*words)
+
+
+class Synonyms(_WordListBuiltin):
+    """
+    <url>:Synonyms:
+    https://www.merriam-webster.com/dictionary/synonym</url>
+
+    <url>:WMA link:
+    https://reference.wolfram.com/language/ref/Synonyms.html</url>
+
+    <dl>
+      <dt>'Synonyms["word"]'
+      <dd>returns a list of the antonyms associated with string "word".
+    </dl>
+
+    >> Synonyms["forget"]
+     = ...
+
+    >> Synonyms["plot"]
+     = ...
+
+    >> Synonyms["fdasfdsafdsa"]
+     = Missing[UnknownWord]
+
+    """
+
+    # Set checking that the number of arguments required is one.
+    eval_error = Builtin.generic_argument_error
+    expected_args = 1
+
+    summary_text = "list synonyms for a word"
+
+    def eval(self, word, evaluation: Evaluation, options: dict):
+        "Synonyms[word_String,  OptionsPattern[Antonyms]]"
+
+        wordnet, _ = self._load_wordnet(
+            evaluation, self._language_name(evaluation, options)
+        )
+        if not wordnet:
+            return Expression(SymbolMissing, StringNotAvailable)
+
+        wordnet_synsets = wordnet.synsets(word.value)
+        if len(wordnet_synsets) == 0:
+            return Expression(SymbolMissing, StringUnkownWord)
+
+        canonic_word = word.value.lower()
+
+        synonyms = set()
+        # Get all synsets for the word
+        for syn in wordnet_synsets:
+            for lemma in syn.lemmas():
+                # Exclude the original word
+                if lemma.name().lower() != canonic_word:
+                    synonyms.add(lemma.name().replace("_", " "))
+
+        return ListExpression(*(String(word) for word in sorted(synonyms)))
 
 
 class WordData(_WordListBuiltin):
@@ -427,7 +538,7 @@ class WordList(_WordListBuiltin):
             words_mathics = (String(word) for word in words)
             result = ListExpression(
                 *words_mathics,
-                elements_properties=ElementsProperties(False, False, True)
+                elements_properties=ElementsProperties(False, False, True),
             )
             return result
 
@@ -441,5 +552,5 @@ class WordList(_WordListBuiltin):
         if words is not None:
             return ListExpression(
                 *(String(word) for word in words),
-                elements_properties=ElementsProperties(False, False, True)
+                elements_properties=ElementsProperties(False, False, True),
             )
