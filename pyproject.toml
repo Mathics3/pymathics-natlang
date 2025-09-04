@@ -57,9 +57,7 @@ classifiers = [
     "Topic :: Software Development :: Interpreters",
 ]
 
-version = "9.0.0"
-# # FIXME: reinstate this
-# dynamic = ["version"]
+dynamic = ["version"]
 
 [project.urls]
 Homepage = "https://github.com/Mathics3/Mathics3-Module-nltk"
@@ -75,8 +73,5 @@ packages = [
     "pymathics.natlang",
 ]
 
-# # FIXME: reinstate this
-# [tool.setuptools.dynamic]
-# # We cannot load the version directly from pymathics.natlang.__init__,
-# # because it would try to import modules which are not already installed.
-# version = {attr = "pymathics.natlang.version.__version__"}
+[tool.setuptools.dynamic]
+version = {attr = "pymathics.natlang.version.__version__"}
