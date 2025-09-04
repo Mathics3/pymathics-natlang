@@ -17,10 +17,14 @@ Example Session
    Out[3]= 0.5
    In[4] = TextCases["I was in London last year.", "Pronoun"]
    Out[4]= {I}
-   In[5] = LanguageIdentify["eins zwei drei"]
-   Out[4]= "German"
+   In[5] = Synonyms["forget"]
+   Out[5]= {blank out, block, bury, draw a blank, leave}
+   In[6] = Antonyms["big"]
+   Out[6]= {little, small}
+   In[7] = LanguageIdentify["eins zwei drei"]
+   Out[7]= "German"
 
-More examples can be found in the `test file <https://github.com/Mathics3/Mathics3-Module-nltk/blob/master/test/test_nltk.py>`_.
+Other examples can be found in the `test file <https://github.com/Mathics3/Mathics3-Module-nltk/blob/master/test/test_ntlk.py>`_.
 
 Installing and Running
 ----------------------
